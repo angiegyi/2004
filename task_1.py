@@ -16,7 +16,7 @@ def counting_sort(num_list,pos,base):
 
     #if digit is greater than base > raise assertion
 
-    count = [0] * (base)
+
     position = [0] * base
     output = [0] * len(num_list)
 
