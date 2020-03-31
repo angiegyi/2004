@@ -38,26 +38,6 @@ def rotate_string(string_enter,p):
 
     return temp
 
-def conversion_intstring(input_string):
-    return_list = ""
-    for i in (input_string):
-        if i == str(0):
-            return_list += "0"
-        else:
-            return_list += ((str(ord(i))))
-    return int(return_list)
-
-
-def conversion_back(input_string):
-    output = ""
-    for i in range(0,len(input_string)-1,2):
-        temp = input_string[i] + input_string[i+1]
-        a = chr(int(temp))
-        output += str(a)
-    return output
-
-print(conversion_back('979797'))
-
 def find_rotations(string_list,p):
 
     temp = []
@@ -67,18 +47,9 @@ def find_rotations(string_list,p):
         rotated_string = rotate_string(string_list[i],p)
         temp.append(rotated_string)
 
-    #apply padding (O(m))
+    #padding
     temp = lets_pad(temp)
-
-    #O(nm) -> convert letters to numbers
-    for i in range(len(temp)):
-        temp[i] = conversion_intstring(temp[i])
-
-    output = radix_sort(temp,10)
-
-    for i in range(len(output)):
-        output[i] = str(conversion_back(str(output[i])))
-
+    output = list_conversion_to_num(temp)
     out = merge(string_list,output)
 
     return out
@@ -112,45 +83,40 @@ def merge(non_rotated_list, rotated_list):
             else:
                 pointer1 += 1
 
+def list_conversion_to_num(num_list):
 
-def counting_sort(num_list,pos,base):
-    """
-    final copy
-    input a list of strings, sort by each index
-    :param num_list:
-    :param pos:
-    :param base:
-    :return:
-    """
+    position = 0
+    max_number = (max(num_list))
+    copy_of_num_list = num_list[:]
+    new_temp_list = num_list[:]
+    len_max_number = len(max_number)
 
-    #sort right to left
-    digits = []
+    while (len_max_number != 0):
+        new_temp_list = list_conversion(new_temp_list,position)
+        new_temp_list = radix_sort(new_temp_list,10)
 
-    #if digit is greater than base > raise assertion
+        #map numbers
+        for i in range(len(new_temp_list)):
+            b = new_temp_list.index(new_temp_list[i],i)
+            new_temp_list[i] = copy_of_num_list[b]
 
-    count = [0] * (base)
-    position = [0] * base
-    output = [0] * len(num_list)
+        position += 1
+        len_max_number -= 1
+
+    print(new_temp_list)
+    return new_temp_list
+
+def list_conversion(list_to_convert,position):
 
     temp_list = []
+    for number in list_to_convert:
+        if number[position] != 0:
+            element = ord((number[len(number) - position - 1]))
+            temp_list.append(element)
+        else:
+            temp_list.append(0)
+    return temp_list
 
-    for number in (num_list):
-        element = int(number//base ** pos) % base
-        temp_list.append(element)
-        count[element] += 1
-
-    for i in range(1,len(position)):
-        position[i] = position[i-1] + count[i-1]
-
-    for i in range(len(num_list)):
-        index = temp_list[i]
-        output[position[index]] = num_list[i]
-        position[index] += 1
-
-    return output
-
-#print(merge([1,2,3,4],[1,2,7,8]))
-
-a = ['aaa','cab','abc','cab']
+a = ['aaa','cab','abc','cab','xyze']
 
 print(find_rotations(a, 1))
