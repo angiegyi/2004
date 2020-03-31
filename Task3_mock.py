@@ -110,6 +110,19 @@ def list_conversion_to_num(num_list):
 
     return new_temp_list
 
+def list_conversion(list_to_convert,position):
+
+    temp_list = []
+
+    for number in list_to_convert:
+        if number[len(number)-position-1] != '0':
+            element = ord((number[len(number) - position - 1]))
+            temp_list.append(element)
+        else:
+            temp_list.append(0)
+    return temp_list
+
+
 def list_num_conversion(string_list):
     position = 0
     len_max_number = len(max(string_list))
@@ -129,18 +142,48 @@ def list_num_conversion(string_list):
 
     return input_copy
 
-def list_conversion(list_to_convert,position):
+def counting_sort(num_list,pos,base):
+    """
+    final copy
+    input a list of strings, sort by each index
+    :param num_list:
+    :param pos:
+    :param base:
+    :return:
+    """
+
+    #if digit is greater than base > raise assertion
+
+    count = [0] * (base)
+    position = [0] * base
+    output = [0] * len(num_list)
 
     temp_list = []
 
-    for number in list_to_convert:
-        if number[len(number)-position-1] != '0':
-            element = ord((number[len(number) - position - 1]))
-            temp_list.append(element)
-        else:
-            temp_list.append(0)
-    return temp_list
+    position = 0
+    len_max_number = len(max(num_list))
 
+    input_copy = num_list[:]
+
+    while (len_max_number != 0):
+
+        to_num = list_conversion(input_copy, position)
+        sorted_to_num = radix_sort(to_num, 10)
+
+    for number in (num_list):
+        element = int(number//base ** pos) % base
+        temp_list.append(element)
+        count[element] += 1
+
+    for i in range(1,len(position)):
+        position[i] = position[i-1] + count[i-1]
+
+    for i in range(len(num_list)):
+        index = temp_list[i]
+        output[position[index]] = num_list[i]
+        position[index] += 1
+
+    return output
 
 a = ['aaa0','cab0','abc0','cab0','xyze']
 
