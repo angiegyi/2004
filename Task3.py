@@ -15,7 +15,7 @@ def lets_pad(input_list):
 
     for i in range(len(input_list)):
         for j in range(len(input_list[i]), max):
-            input_list[i] = "0" + input_list[i]
+            input_list[i] = input_list[i] + "0"
 
     return input_list
 
@@ -86,37 +86,46 @@ def merge(non_rotated_list, rotated_list):
 def list_conversion_to_num(num_list):
 
     position = 0
-    max_number = (max(num_list))
-    copy_of_num_list = num_list[:]
+    len_max_number = len(max(num_list))
+
     new_temp_list = num_list[:]
-    len_max_number = len(max_number)
+    temp_string_list = num_list[:]
 
     while (len_max_number != 0):
-        new_temp_list = list_conversion(new_temp_list,position)
-        new_temp_list = radix_sort(new_temp_list,10)
 
+        #this holds the number conversions
+        new_temp_list = list_conversion(temp_string_list,position)
+        temp = new_temp_list[:]
+        copy_of_num_list = radix_sort(temp,10)
+
+        print(temp)
+        print(copy_of_num_list)
         #map numbers
         for i in range(len(new_temp_list)):
-            b = new_temp_list.index(new_temp_list[i],i)
-            new_temp_list[i] = copy_of_num_list[b]
+            b = temp.index(copy_of_num_list[i],i)
+            temp_string_list[i] = temp_string_list[b]
+
 
         position += 1
         len_max_number -= 1
 
-    print(new_temp_list)
     return new_temp_list
 
 def list_conversion(list_to_convert,position):
 
     temp_list = []
+
     for number in list_to_convert:
-        if number[position] != 0:
+        a = number[len(number)-position-1]
+        if number[len(number)-position-1] != '0':
             element = ord((number[len(number) - position - 1]))
             temp_list.append(element)
         else:
             temp_list.append(0)
     return temp_list
 
-a = ['aaa','cab','abc','cab','xyze']
+a = ['aaa0','cab00','abc0','cab0','xyze']
 
-print(find_rotations(a, 1))
+print(list_conversion_to_num(['aaa0', 'abc0', 'bca0', 'abc0', 'yzex']))
+
+# print(find_rotations(a, 1))
