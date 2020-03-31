@@ -23,22 +23,22 @@ def lets_pad(input_list):
 
 
 def rotate_string(string_enter, p):
-    """
-    rotates string by p positions
-    O(m) = O(2m)
-    :param string_enter:
-    :param p:
-    :return:
-    """
-
     temp = ""
-
-    for i in range(p, len(string_enter)):
-        temp += string_enter[i]
-
-    for i in range(p):
-        temp += string_enter[i]
-
+    while abs(p) > len(string_enter):
+        if p > 0:
+            p -= len(string_enter)
+        else:
+            p += len(string_enter)
+    if p >= 0:
+        for i in range(p, len(string_enter)):
+            temp += string_enter[i]
+        for i in range(p):
+            temp += string_enter[i]
+    elif p < 0:
+        for i in range(len(string_enter) + p, len(string_enter)):
+            temp += string_enter[i]
+        for i in range(len(string_enter)+p):
+            temp += string_enter[i]
     return temp
 
 
@@ -48,7 +48,7 @@ def conversion_intstring(input_string):
         if i == str(0):
             return_list += "0"
         else:
-            return_list += (str(ord(i) - 50))
+            return_list += (str(ord(i) - 70))
     return int(return_list)
 
 
@@ -61,12 +61,15 @@ def conversion_back(input_string):
     output = ""
     for i in range(0, len(input_string) - 1, 2):
         temp = input_string[i] + input_string[i + 1]
-        a = chr(int(temp) + 50)
+        a = chr(int(temp) + 70)
         output += str(a)
     return output
 
 
 def find_rotations(string_list, p):
+
+    assert len(string_list) != 0, 'cannot have an empty list'
+
     temp = []
 
     # rotate all the strings first O(m)
@@ -86,7 +89,19 @@ def find_rotations(string_list, p):
     for i in range(len(output)):
         output[i] = str(conversion_back(str(output[i])))
 
-    rename = merge(string_list, output, p)
+    #convert input list
+
+    copy_of_string_list = string_list[:]
+    copy_of_string_list = lets_pad(copy_of_string_list)
+
+    for i in range(len(copy_of_string_list)):
+        copy_of_string_list[i] = conversion_intstring(copy_of_string_list[i])
+    copy_of_string_list = radix_sort(copy_of_string_list, 100)
+
+    for i in range(len(copy_of_string_list)):
+        copy_of_string_list[i] = str(conversion_back(str(copy_of_string_list[i])))
+
+    rename = merge(copy_of_string_list, output, -p)
 
     return rename
 
@@ -119,3 +134,4 @@ def merge(non_rotated_list, rotated_list, p):
             else:
                 pointer1 += 1
 
+print(find_rotations(['qwertyui', 'wertyuiq', 'rtyuiqwe', 'asdfgh', 'dfghas'], 2))
