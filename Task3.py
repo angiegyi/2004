@@ -21,22 +21,24 @@ def lets_pad(input_list):
 
 def rotate_string(string_enter,p):
     """
+    -> needs to accomodate for right rotations(-p)
     rotates string by p positions
     O(m) = O(2m)
     :param string_enter:
     :param p:
     :return:
     """
-
     temp = ""
-
-    for i in range(p,len(string_enter)):
-        temp += string_enter[i]
-
-    for i in range(p):
-        temp += string_enter[i]
-
-    return temp
+    if p >= 0:
+        for i in range(p, len(string_enter)):
+            temp += string_enter[i]
+        for i in range(p):
+            temp += string_enter[i]
+    elif p < 0:
+        for i in range(len(string_enter) + p, len(string_enter)):
+            temp += string_enter[i]
+        for i in range(len(string_enter) + p):
+            temp += string_enter[i]
 
 def find_rotations(string_list,p):
 
@@ -98,25 +100,40 @@ def list_conversion_to_num(num_list):
         temp = new_temp_list[:]
         copy_of_num_list = radix_sort(temp,10)
 
-        print(temp)
-        print(copy_of_num_list)
+
         #map numbers
         for i in range(len(new_temp_list)):
             b = temp.index(copy_of_num_list[i],i)
             temp_string_list[i] = temp_string_list[b]
-
-
         position += 1
         len_max_number -= 1
 
     return new_temp_list
+
+def list_num_conversion(string_list):
+    position = 0
+    len_max_number = len(max(string_list))
+
+    input_copy = string_list[:]
+
+    while (len_max_number != 0):
+
+        to_num = list_conversion(input_copy,position)
+        sorted_to_num = radix_sort(to_num,10)
+
+        for i in range(len(input_copy)):
+            input_copy[i] = input_copy[to_num.index(sorted_to_num[i],i)]
+
+        position += 1
+        len_max_number -= 1
+
+    return input_copy
 
 def list_conversion(list_to_convert,position):
 
     temp_list = []
 
     for number in list_to_convert:
-        a = number[len(number)-position-1]
         if number[len(number)-position-1] != '0':
             element = ord((number[len(number) - position - 1]))
             temp_list.append(element)
@@ -124,8 +141,7 @@ def list_conversion(list_to_convert,position):
             temp_list.append(0)
     return temp_list
 
-a = ['aaa0','cab00','abc0','cab0','xyze']
 
-print(list_conversion_to_num(['aaa0', 'abc0', 'bca0', 'abc0', 'yzex']))
+a = ['aaa0','cab0','abc0','cab0','xyze']
 
-# print(find_rotations(a, 1))
+print(list_num_conversion(['aaa0', 'abc0', 'bca0', 'abc0', 'yzex']))
