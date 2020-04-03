@@ -3,7 +3,7 @@ import random
 
 def counting_sort(num_list,pos,base):
     """
-    counting sort
+    counting sort is a sorting alogrithm which takes in a list of integers and sorts them based on a key (in this case the place position).
     Complexity: O(N * U) where N is the length of the input list and U is the length of the largest digit to be sorted
     :param num_list: non empty list of integers
     :param pos: integer position to determine place value
@@ -34,8 +34,9 @@ def counting_sort(num_list,pos,base):
 
 def radix_sort(num_list,base):
     """
-    radix sort
-    Complexity: O(N * U) where N is the length of the input list and U is the length of the largest digit to be sorted
+    radix sort is a sorting algorithm which takes in a list of integers and sorts numbers on their representation in base b using counting sort and returns a sorted integer list.
+    Complexity: O((N+b)M) where N is the number of integers in num_list, b is the base and M
+    is the length of the largest number in the list represented in base b.
     :param num_list: non empty list of integers
     :param base: integer for the numbers to be sorted in the base
     :return: a sorted list of integers

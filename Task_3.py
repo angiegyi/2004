@@ -4,10 +4,11 @@ from Task_1 import radix_sort, counting_sort
 
 def lets_pad(input_list):
     """
-    O(m*n + n)
+    Pads strings which arent of equal length to the longest string in the inoput list
+    Complexity: O(m*n) where n is the length of the input list and m is the length of the longest string in the list
     adds 0's
     :param input_list:
-    :return:
+    :return: a list of strings which are of equal length
     """
     max = len(input_list[0])
 
@@ -24,6 +25,12 @@ def lets_pad(input_list):
 
 #
 def rotate_string(string_enter, p):
+    """
+    rotates the string using a rotation size p
+    :param string_enter: non empty input string
+    :param p: rotation size p
+    :return: string rotated to size p
+    """
     temp = ""
     while abs(p) > len(string_enter):
         if p > 0:
@@ -44,6 +51,12 @@ def rotate_string(string_enter, p):
 
 
 def conversion_intstring(input_string):
+    """
+    Converts a character to its corresponding number representation
+    Complexity: O(m) where m is the length of the input string
+    :param input_string: A valid non empty integer
+    :return: string representation of input integer
+    """
     return_list = ""
     for i in (input_string):
         if i == str(0):
@@ -56,8 +69,9 @@ def conversion_intstring(input_string):
 def conversion_back(input_string):
     """
     Converts the number representation back to character representation
+    Complexity: O(m) where m is the length of the input string
     :param input_string: A valid non empty integer
-    :return: String conversion
+    :return: integer representation of input string
     """
     output = ""
     for i in range(0, len(input_string) - 1, 2):
@@ -69,7 +83,9 @@ def conversion_back(input_string):
 
 def find_rotations(string_list, p):
     """
-    find_rotations fin
+    given a non empty list of strings and a rotation size p, find_rotations finds all the strings in the list
+    whos p-rotations also appear in the list, outputted in the form of a string list.
+    Complexity O(nm) = O(n + n + m*n + n + n + mn + mn + n + m*n): where n is the length of the input list and m is the most ammount of letters in a word
     :param string_list: a non empty list of strings
     :param p: the number of left/right rotations
     :return: a list of strings containing strings whos rotated string is also in string_list
@@ -80,16 +96,16 @@ def find_rotations(string_list, p):
     temp = []
     copy_of_string_list = string_list[:]
 
-    # rotate all the strings first O(m)
+    #rotate all the strings first list
     for i in range(len(string_list)):
         rotated_string = rotate_string(string_list[i], p)
         temp.append(rotated_string)
 
-    # apply padding (O(m))
+    #apply padding
     temp = lets_pad(temp)
     copy_of_string_list = lets_pad(copy_of_string_list)
 
-    # O(nm) -> convert letters to numbers
+    #convert letters to numbers
     for i in range(len(temp)):
         temp[i] = conversion_intstring(temp[i])
         copy_of_string_list[i] = conversion_intstring(copy_of_string_list[i])
@@ -112,7 +128,7 @@ def find_rotations(string_list, p):
 def merge(non_rotated_list, rotated_list):
     """
     using the merge algorithm, this function determines if the rotated string is in the input list
-    Complexity: O(n+m) = where n is the length of non_rotated_list and m is the length of rotated_list
+    Complexity: O(n) where n is the size of the input list
     :param non_rotated_list: string type list containing non rotated original input list of strings
     :param rotated_list: string type list containing rotated original input list of strings
     :return: a String list containing the duplicated rotated strings
