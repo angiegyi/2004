@@ -22,6 +22,7 @@ def lets_pad(input_list):
     return input_list
 
 
+#
 def rotate_string(string_enter, p):
     temp = ""
     while abs(p) > len(string_enter):
@@ -67,10 +68,17 @@ def conversion_back(input_string):
 
 
 def find_rotations(string_list, p):
+    """
+    find_rotations fin
+    :param string_list: a non empty list of strings
+    :param p: the number of left/right rotations
+    :return: a list of strings containing strings whos rotated string is also in string_list
+    """
 
     assert len(string_list) != 0, 'cannot have an empty list'
 
     temp = []
+    copy_of_string_list = string_list[:]
 
     # rotate all the strings first O(m)
     for i in range(len(string_list)):
@@ -79,37 +87,32 @@ def find_rotations(string_list, p):
 
     # apply padding (O(m))
     temp = lets_pad(temp)
+    copy_of_string_list = lets_pad(copy_of_string_list)
 
     # O(nm) -> convert letters to numbers
     for i in range(len(temp)):
         temp[i] = conversion_intstring(temp[i])
+        copy_of_string_list[i] = conversion_intstring(copy_of_string_list[i])
+
+    #sort both lists
     output = radix_sort(temp, 100)
+    copy_of_string_list = radix_sort(copy_of_string_list, 100)
+
+    #get the duplicates
+    output = merge(copy_of_string_list, output)
+    print(output)
 
     #convert back to numbers
     for i in range(len(output)):
-        output[i] = str(conversion_back(str(output[i])))
+        output[i] = rotate_string(str(conversion_back(str(output[i]))),-p)
 
-    #convert input list
-
-    copy_of_string_list = string_list[:]
-    copy_of_string_list = lets_pad(copy_of_string_list)
-
-    for i in range(len(copy_of_string_list)):
-        copy_of_string_list[i] = conversion_intstring(copy_of_string_list[i])
-    copy_of_string_list = radix_sort(copy_of_string_list, 100)
-
-    for i in range(len(copy_of_string_list)):
-        copy_of_string_list[i] = str(conversion_back(str(copy_of_string_list[i])))
-
-    rename = merge(copy_of_string_list, output, -p)
-
-    return rename
+    return output
 
 
-def merge(non_rotated_list, rotated_list, p):
+def merge(non_rotated_list, rotated_list):
     """
     using the merge algorithm, this function determines if the rotated string is in the input list
-    Complexity: O(n) = O(n)*O(m), the summed lengths of sublists a and b
+    Complexity: O(n+m) = where n is the length of non_rotated_list and m is the length of rotated_list
     :param non_rotated_list: string type list containing non rotated original input list of strings
     :param rotated_list: string type list containing rotated original input list of strings
     :return: a String list containing the duplicated rotated strings
@@ -120,12 +123,11 @@ def merge(non_rotated_list, rotated_list, p):
     pointer2 = 0
 
     for i in range(len(non_rotated_list) + len(rotated_list)):
-
-        if (i == (len(non_rotated_list) - 1)) or (i == (len(rotated_list) - 1)):
+        if (pointer1 == (len(non_rotated_list))) or (pointer2 == (len(rotated_list))):
             return new_list
         else:
             if non_rotated_list[pointer1] == rotated_list[pointer2]:
-                new_list.append(rotate_string(rotated_list[pointer2], p))
+                new_list.append((rotated_list[pointer2]))
                 pointer1 += 1
                 pointer2 += 1
 
@@ -134,4 +136,4 @@ def merge(non_rotated_list, rotated_list, p):
             else:
                 pointer1 += 1
 
-print(find_rotations(['qwertyui', 'wertyuiq', 'rtyuiqwe', 'asdfgh', 'dfghas'], 2))
+print(find_rotations((['abcdefgh', 'ghabcdef', 'qwerty', 'qwerty', 'ertyqw']),-2))

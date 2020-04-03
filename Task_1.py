@@ -1,20 +1,15 @@
 import timeit
 import random
-import csv
-import math
 
-#this one has no base conversions
 def counting_sort(num_list,pos,base):
     """
-    final copy
-    input a list of strings, sort by each index
-    :param num_list:
-    :param pos:
-    :param base:
-    :return:
+    counting sort
+    Complexity: O(N * U) where N is the length of the input list and U is the length of the largest digit to be sorted
+    :param num_list: non empty list of integers
+    :param pos: integer position to determine place value
+    :param base: integer for the numbers to be sorted in the base
+    :return: a sorted list of integers according to pos
     """
-
-    #if digit is greater than base > raise assertion
 
     count = [0] * (base)
     position = [0] * base
@@ -37,7 +32,16 @@ def counting_sort(num_list,pos,base):
 
     return output
 
-def radix_sort(num_list,base=10):
+def radix_sort(num_list,base):
+    """
+    radix sort
+    Complexity: O(N * U) where N is the length of the input list and U is the length of the largest digit to be sorted
+    :param num_list: non empty list of integers
+    :param base: integer for the numbers to be sorted in the base
+    :return: a sorted list of integers
+    """
+
+    assert len(num_list) != 0, 'cannot have an empty list'
 
     max_number = max(num_list)
     new_temp_list = num_list[:]
@@ -50,13 +54,8 @@ def radix_sort(num_list,base=10):
 
     return new_temp_list
 
-
-    # base runs the best when length of base matches input
-
 def time_radxix_sort():
-    """
-    :return:
-    """
+
     test_data = [random.randint(1, (2 ** 64) - 1) for _ in range(100000)]
     output_array = []
 
