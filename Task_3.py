@@ -23,31 +23,28 @@ def lets_pad(input_list):
     return input_list
 
 
-#
-def rotate_string(string_enter, p):
+def rotate_string(input_string, p):
     """
     rotates the string using a rotation size p
-    :param string_enter: non empty input string
+    Complexity: O(m) where m is the size of the input list
+    :param input_string: non empty input string
     :param p: rotation size p
     :return: string rotated to size p
     """
-    temp = ""
-    while abs(p) > len(string_enter):
-        if p > 0:
-            p -= len(string_enter)
-        else:
-            p += len(string_enter)
-    if p >= 0:
-        for i in range(p, len(string_enter)):
-            temp += string_enter[i]
+    output = ""
+    p = p % len(input_string)
+
+    if p < 0:
+        for i in range(len(input_string) + p, len(input_string)):
+            output += input_string[i]
+        for i in range(len(input_string) + p):
+            output += input_string[i]
+    elif p >= 0:
+        for i in range(p, len(input_string)):
+            output += input_string[i]
         for i in range(p):
-            temp += string_enter[i]
-    elif p < 0:
-        for i in range(len(string_enter) + p, len(string_enter)):
-            temp += string_enter[i]
-        for i in range(len(string_enter)+p):
-            temp += string_enter[i]
-    return temp
+            output += input_string[i]
+    return output
 
 
 def conversion_intstring(input_string):
@@ -116,7 +113,6 @@ def find_rotations(string_list, p):
 
     #get the duplicates
     output = merge(copy_of_string_list, output)
-    print(output)
 
     #convert back to numbers
     for i in range(len(output)):
@@ -133,7 +129,6 @@ def merge(non_rotated_list, rotated_list):
     :param rotated_list: string type list containing rotated original input list of strings
     :return: a String list containing the duplicated rotated strings
     """
-
     new_list = []
     pointer1 = 0
     pointer2 = 0
@@ -152,4 +147,4 @@ def merge(non_rotated_list, rotated_list):
             else:
                 pointer1 += 1
 
-print(find_rotations((['abcdefgh', 'ghabcdef', 'qwerty', 'qwerty', 'ertyqw']),-2))
+# print(find_rotations((['abcdefgh', 'ghabcdef', 'qwerty', 'qwerty', 'ertyqw']),-2))
