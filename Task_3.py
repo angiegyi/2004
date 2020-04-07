@@ -2,7 +2,7 @@ from Task_1 import radix_sort, counting_sort
 
 #this is the final task 3 copy
 
-def lets_pad(input_list):
+def pad_function(input_list):
     """
     Pads strings which arent of equal length to the longest string in the inoput list
     Complexity: O(m*n) where n is the length of the input list and m is the length of the longest string in the list
@@ -99,8 +99,8 @@ def find_rotations(string_list, p):
         temp.append(rotated_string)
 
     #apply padding
-    temp = lets_pad(temp)
-    copy_of_string_list = lets_pad(copy_of_string_list)
+    temp = pad_function(temp)
+    copy_of_string_list = pad_function(copy_of_string_list)
 
     #convert letters to numbers
     for i in range(len(temp)):
