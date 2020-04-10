@@ -133,16 +133,16 @@ def conversion_intstring(input_string):
     return int(return_list)
 
 
-def conversion_back(input_string):
+def conversion_back(input_number):
     """
     Converts the number representation back to character representation
     Complexity: O(m) where m is the length of the input string
-    :param input_string: A valid non empty integer
-    :return: integer representation of input string
+    :param input_number: A valid non empty integer
+    :return: string representation of input integer
     """
     output = ""
-    for i in range(0, len(input_string) - 1, 2):
-        temp = input_string[i] + input_string[i + 1]
+    for i in range(0, len(input_number) - 1, 2):
+        temp = input_number[i] + input_number[i + 1]
         a = chr(int(temp) + 70)
         output += str(a)
     return output
@@ -152,7 +152,7 @@ def find_rotations(string_list, p):
     """
     given a non empty list of strings and a rotation size p, find_rotations finds all the strings in the list
     whos p-rotations also appear in the list, outputted in the form of a string list.
-    Complexity O(nm) = O(n + n + m*n + n + n + mn + mn + n + m*n): where n is the length of the input list and m is the most ammount of letters in a word
+    Complexity O(nm) = O(5n + 4mn): where n is the length of the input list and m is the most ammount of letters in a word
     :param string_list: a non empty list of strings
     :param p: the number of left/right rotations
     :return: a list of strings containing strings whos rotated string is also in string_list
