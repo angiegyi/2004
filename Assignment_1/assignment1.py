@@ -70,7 +70,7 @@ def time_radxix_sort():
 
     return output_array
 
-from Task_1 import radix_sort, counting_sort
+from Assignment_1.Task_1 import radix_sort, counting_sort
 
 def pad_function(input_list):
     """
