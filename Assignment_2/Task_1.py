@@ -3,7 +3,6 @@ def longest_oscillation_greedy(L):
     only gives consecutive oscillations
     """
     memo = len(L) * [1]
-    output = []
 
     if len(L) == 0:
         return [0]
@@ -53,6 +52,12 @@ def longest_oscillation_greedy(L):
     return (memo[-1],get_numbers(memo))
 
 def determine_flag(a,b):
+    """
+    takes in two intergers, compares them and determines if the next digit must be greater or less than the current digit using a boolean
+    :param a: integer a
+    :param b: integer b
+    :return: boolean
+    """
     if a < b:
         flag = True
 
@@ -64,53 +69,25 @@ def determine_flag(a,b):
     return flag
 
 def get_numbers(memo):
+    """
+    takes in an input list of max subsequences at the ith inedex gets the indexes which make up the longest oscillation
+    :param memo: the memo array
+    :return: an array of integers at where the oscillations occur
+    """
 
     output_index = []
 
-    i = 0
-    while i < len(memo):
-        j = i
-        if j < len(memo)-1:
-            while memo[j] == memo[j + 1]:
-                j += 1
-        output_index.append(j-1) #may be affecting it
-        i = j
-        i += 1
+    for i in range(len(memo)):
+        current = memo[i]
+        if (i != len(memo)-1):
+            if memo[i+1]== current:
+                continue
+        output_index.append(i)
+
+    #if all the numbers are the same
+    if len(output_index) == 1:
+        return [1]
+
     return output_index
 
-print(get_numbers([1,1,2,3,3,4,4,5,6,7]))
-
-def longest_oscillation(L):
-    """
-    only gives consecutive oscillations
-    """
-    memo = len(L) * [1]
-
-    #initial check
-
-    if L[0] < L[1]:
-        flag = True
-
-    if L[0] > L[1]:
-        flag = False
-
-    i = 0
-    j = i + 1
-
-    while j < len(L):
-
-        if flag is True:
-            if L[i] < L[j]:
-                memo[j] = max(memo[i]+1, (memo[j]))
-                flag = False
-        else:
-            if L[i] > L[j]:
-                memo[j] = max(memo[i]+1, (memo[j]))
-                flag = True
-
-        j += 1
-        i += 1
-
-    return memo
-
-#print(longest_oscillation_greedy([3,3,2]))
+print(longest_oscillation_greedy([3,3,3,3,3,3]))
