@@ -1,6 +1,8 @@
-def longest_oscillation_greedy(L):
+def longest_oscillation(L):
     """
-    only gives consecutive oscillations
+    finds the longest oscillation in a given list
+    :param L: list of integers
+    :return: int, longest length oscillation
     """
     memo = len(L) * [1]
 
@@ -9,7 +11,6 @@ def longest_oscillation_greedy(L):
 
     if len(L) == 1:
         return [1]
-
 
     #initial check
     needs_max = determine_flag(L[0],L[1])
@@ -64,14 +65,14 @@ def longest_oscillation_greedy(L):
 
 def determine_flag(a,b):
     """
-    takes in two intergers, compares them and determines if the next digit must be greater or less than the current digit using a boolean
+    takes in two integers, compares them and determines if the next digit must be greater or less than the current digit using a boolean
+    Complexity: O(1) constant time comparison
     :param a: integer a
     :param b: integer b
-    :return: boolean
+    :return: boolean indicating whether next integer must be > or < then current
     """
     if a < b:
         flag = True
-
     elif a > b:
         flag = False
     else:
@@ -82,6 +83,7 @@ def determine_flag(a,b):
 def get_numbers(memo):
     """
     takes in an input list of max subsequences at the ith inedex gets the indexes which make up the longest oscillation
+    Complexity: O(n) where n is the length of the memo array
     :param memo: the memo array
     :return: an array of integers at where the oscillations occur
     """
@@ -101,4 +103,4 @@ def get_numbers(memo):
 
     return output_index
 
-print(longest_oscillation_greedy([0]))
+print(longest_oscillation([0]))
