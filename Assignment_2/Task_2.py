@@ -18,7 +18,8 @@ def longest_walk(M):
             memo[i][j] = path_length
             max_path = max(path_length, max_path)
 
-    return max_path
+    path_taken = reverse_find_neighbour(memo,max_path)
+    return max_path,path_taken
 
 def valid_neighbour(matrix, current_position):
     """
@@ -44,6 +45,44 @@ def valid_neighbour(matrix, current_position):
             if matrix[original_row][original_column] < matrix[row_dir+original_row][col_dir+original_column]:
                 if (original_row+row_dir,original_column+col_dir) != current_position:
                     valid_neighbour.append((original_row+row_dir,original_column+col_dir))
+
+    return valid_neighbour
+
+
+def reverse_find_neighbour(memo,target):
+    """
+    given a current position, valid neighbour will return a list of positions which you can move to
+    Complexity: O(mn) will run for a constant 9 loops for each direction
+    :param matrix:
+    :param current_position:
+    :return:
+    """
+    direction = [[1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1]]
+
+    for i in range(len(memo)):
+        for j in range(len(memo[0])):
+            if memo[i][j] == target:
+                current = (i,j)
+                break
+
+    original_row = current[0]
+    original_column = current[1]
+
+    valid_neighbour = []
+    valid_neighbour.append((original_row,original_column))
+
+    for i in range(len(direction)):
+        row_dir = direction[i][0]
+        col_dir = direction[i][1]
+
+        together_row = original_row + row_dir
+        together_col = original_column + col_dir
+
+        if (0 <= together_row < len(memo)) and (0 <= together_col < len(memo[0])):
+            if memo[together_row][together_col] == (memo[original_row][original_column]-1):
+                valid_neighbour.append((together_row,together_col))
+                original_row = together_row
+                original_column = together_col
     return valid_neighbour
 
 def calculate_walk(matrix, i ,j,memo):
@@ -56,7 +95,6 @@ def calculate_walk(matrix, i ,j,memo):
     :param memo: 2D matrix of numbers storing longest path
     :return: return longest path at matrix[i][j]
     """
-
     #if a number already has been stored, O(1) lookup
     if memo[i][j] > 0:
         return memo[i][j]
@@ -72,4 +110,4 @@ def calculate_walk(matrix, i ,j,memo):
         max_length = max(max_length,path_length)
     return max_length
 
-print(longest_walk([[1,2,3],[1,2,1]]))
+print(longest_walk([[4,7,1,2],[9,8,1,3],[2,4,6,7],[8,4,5,2]]))
