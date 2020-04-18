@@ -51,11 +51,11 @@ def valid_neighbour(matrix, current_position):
 
 def reverse_find_neighbour(memo,target):
     """
-    given a current position, valid neighbour will return a list of positions which you can move to
-    Complexity: O(mn) will run for a constant 9 loops for each direction
+    given the final memo table, this function works backwards to find the path taken
+    Complexity: O(1) will run for a constant 9 loops for each direction
     :param matrix:
-    :param current_position:
-    :return:
+    :param target: length of max path in the memo table
+    :return: returns a list of integer tuples which hold the path taken
     """
     direction = [[1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1]]
 
