@@ -7,10 +7,10 @@ def longest_oscillation(L):
     memo = len(L) * [1]
 
     if len(L) == 0:
-        return [0]
+        return 0, []
 
     if len(L) == 1:
-        return [1]
+        return (1,[0])
 
     #initial check
     needs_max = determine_flag(L[0],L[1])
@@ -24,8 +24,8 @@ def longest_oscillation(L):
         # iterate through: looking for the next biggest element
         if needs_max is True:
             if L[i] < L[j]: #if previous < next
-                while j < len(L)-1 and L[j+1] > L[j]: #is finding the max elemen
-                    memo[j] = memo[i] #while it hasnt found the peak, the best we can do is the previous one
+                while j < len(L)-1 and L[j+1] > L[j]: #is finding the max element
+                    memo[j] = max(memo[i] + 1, (memo[j])) #while it hasnt found the peak, the best we can do is the previous one
                     j += 1
                 if j == len(L)-1:  #to stop it from going n^2
                     memo[j] = max(memo[i] + 1, (memo[j]))
@@ -35,11 +35,14 @@ def longest_oscillation(L):
                     j = prev_j
                     needs_max = False
 
+            elif L[i] == L[j]: #edge case: if the next elements are equal
+                memo[j] = memo[i]
+
         # looking for the next smallest element
         elif needs_max is False:
             if L[i] > L[j]: #if previous > next
                 while j < len(L) - 1 and L[j + 1] < L[j]: #iterates through to find
-                    memo[j] = memo[i]
+                    memo[j] = max(memo[i] + 1, (memo[j]))
                     j += 1
                 if j == len(L)-1: #to stop it from going n^2
                     memo[j] = max(memo[i] + 1, (memo[j]))
@@ -48,6 +51,10 @@ def longest_oscillation(L):
                     memo[j] = max(memo[i]+1, (memo[j]))
                     needs_max = True
                     j = prev_j
+
+            elif L[i] == L[j]: #edge case: if the next elements are equal
+                print('y')
+                memo[j] = memo[i]
 
         #if two items are equal
         else:
@@ -60,6 +67,8 @@ def longest_oscillation(L):
 
         j += 1
         i += 1
+
+    print(memo)
 
     return (memo[-1],get_numbers(memo))
 
@@ -99,8 +108,9 @@ def get_numbers(memo):
 
     #if all the numbers are the same
     if len(output_index) == 1:
-        return [1]
+        return [0]
 
     return output_index
 
-print(longest_oscillation([0]))
+
+print(longest_oscillation([8, -1, 0, 4, -2, -3]))
