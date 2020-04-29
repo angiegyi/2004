@@ -24,10 +24,11 @@ def longest_walk(M):
 def valid_neighbour(matrix, current_position):
     """
     given a current position, valid neighbour will return a list of positions which you can move to
-    Complexity: O(1) will run for a constant 9 loops for each direction
-    :param matrix:
-    :param current_position:
-    :return:
+    Time Complexity: O(1) will run for a constant 9 loops for each direction
+    Space Complexity: O(1) -> O(9) max worst case for the length of directions
+    :param matrix: 2D matrix of numbers
+    :param current_position: tuple (i,j) representing current position
+    :return: list of possible valid moves in tuples (i,j)
     """
     direction = [[1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1]]
 
@@ -41,7 +42,6 @@ def valid_neighbour(matrix, current_position):
         col_dir = direction[i][1]
 
         if (0 <= original_row + row_dir < len(matrix)) and (0 <= original_column + col_dir < len(matrix[0])):
-            #if the original position < desired position
             if matrix[original_row][original_column] < matrix[row_dir+original_row][col_dir+original_column]:
                 if (original_row+row_dir,original_column+col_dir) != current_position:
                     valid_neighbour.append((original_row+row_dir,original_column+col_dir))
@@ -52,8 +52,9 @@ def valid_neighbour(matrix, current_position):
 def reverse_find_neighbour(memo,target):
     """
     given the final memo table, this function works backwards to find the path taken
-    Complexity: O(mn) * O(1) will run for a constant 9 loops for each position in the matrix
-    :param matrix:
+    Time Complexity: O(mn) * O(1) will run for a constant 9 loops for each position in the matrix
+    Space Complexity: mn where m
+    :param matrix: O(1)
     :param target: length of max path in the memo table
     :return: returns a list of integer tuples which hold the path taken
     """
@@ -91,12 +92,13 @@ def reverse_find_neighbour(memo,target):
 def calculate_walk(matrix, i ,j,memo):
     """
     recursive function to find the max length path at starting index i,j
-    Complexity: O(1) straight lookup if result is in memo otherwise O(mn) if path hasnt been calculated yet
+    Time Complexity: O(1) straight lookup if result is in memo otherwise O(mn) if path hasnt been calculated yet
+    Space Complexity: O(mn) where O(1) runs for MN times
     :param matrix: 2D matrix of numbers
     :param i: starting row (integer)
     :param j: starting column (integer)
     :param memo: 2D matrix of numbers storing longest path
-    :return: return longest path at matrix[i][j]
+    :return: return integer representation of longest path at matrix[i][j]
     """
     #if a number already has been stored, O(1) lookup
     if memo[i][j] > 0:
@@ -112,5 +114,3 @@ def calculate_walk(matrix, i ,j,memo):
         path_length = 1 + calculate_walk(matrix,move[0],move[1],memo)
         max_length = max(max_length,path_length)
     return max_length
-
-print(longest_walk([]))

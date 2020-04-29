@@ -68,7 +68,7 @@ def longest_oscillation(L):
         j += 1
         i += 1
 
-    print(memo)
+
 
     return (memo[-1],get_numbers(memo))
 
@@ -112,5 +112,4 @@ def get_numbers(memo):
 
     return output_index
 
-
-print(longest_oscillation([8, -1, 0, 4, -2, -3]))
+print(longest_oscillation([1,2,3,4,5]))
