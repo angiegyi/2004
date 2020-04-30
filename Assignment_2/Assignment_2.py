@@ -116,7 +116,7 @@ def get_numbers(memo):
 def longest_walk(M):
     """
     taking in a 2D matrix of integers, the longest increasing walk in the matrix will be returned
-    Complexity: O(MN) where M is the width of the matrix and N is the height
+    Time Complexity: O(MN) where M is the width of the matrix and N is the height
     Space Complexity: O(MN))
     :param M: 2D matrix of numbers
     :return: a tuple containing an integer representing the longest increasing walk and its corresponding path
@@ -142,6 +142,7 @@ def longest_walk(M):
             path_length = calculate_walk(M,i,j,memo)
             max_path = max(path_length, max_path)
 
+    print(memo)
     #to get the path
     path_taken = reverse_find_neighbour(memo,max_path)
     return max_path,path_taken
@@ -268,4 +269,3 @@ def calculate_walk(matrix, i ,j,memo):
         max_length = max(max_length,path_length)
     memo[i][j] = max_length
     return max_length
-
