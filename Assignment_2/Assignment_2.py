@@ -122,7 +122,7 @@ def longest_walk(M):
     :return: a tuple containing an integer representing the longest increasing walk and its corresponding path
     """
 
-    if len(M) == 0:
+    if len(M) == 0 or len(M[0]) == 0:
         return 0, []
 
     #make table
@@ -269,3 +269,5 @@ def calculate_walk(matrix, i ,j,memo):
         max_length = max(max_length,path_length)
     memo[i][j] = max_length
     return max_length
+
+print(longest_walk([[],[],[]]))
