@@ -270,4 +270,3 @@ def calculate_walk(matrix, i ,j,memo):
     memo[i][j] = max_length
     return max_length
 
-print(longest_walk([[],[],[]]))
