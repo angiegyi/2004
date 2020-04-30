@@ -117,7 +117,7 @@ def longest_walk(M):
     """
     taking in a 2D matrix of integers, the longest increasing walk in the matrix will be returned
     Time Complexity: O(MN) where M is the width of the matrix and N is the height
-    Space Complexity: O(MN))
+    Space Complexity: O(MN)) where M is the width of the matrix and N is the height
     :param M: 2D matrix of numbers
     :return: a tuple containing an integer representing the longest increasing walk and its corresponding path
     """
