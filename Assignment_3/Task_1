@@ -1,0 +1,78 @@
+class TrieNode:
+    def __init__(self,char):
+        self.children = [None] * 26
+        self.is_end = False
+        self.char = char
+        self.count = 0
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode("*")
+
+    def insert(self,word):
+        current_node = self.root
+        if len(word) == 0:
+            self.root.is_end = True
+            return
+
+        for char in word:
+            index = ord(char) - ord('a')
+            if current_node.children[index] is None:
+                current_node.children[index] = TrieNode(char)
+            current_node = current_node.children[index]
+        current_node.is_end = True
+        current_node.count += 1
+
+    def search(self,word):
+        if len(word) == 0:
+            return True
+
+        current_node = self.root
+        for char in word:
+            index = ord(char) - ord('a')
+            if current_node.children[index] is None:
+                return False
+            else:
+                current_node = current_node.children[index]
+        return current_node.is_end
+
+
+    def string_freq(self,query_str):
+        count = 0
+
+        if len(query_str) == 0:
+            return 1
+
+        current_node = self.root
+
+        for char in query_str:
+            index = ord(char) - ord('a')
+            if current_node.children[index] is not None:
+                if current_node.children[index].is_end:
+                    count += 1
+            current_node = current_node.children[index]
+        return current_node.count
+
+    def prefix_freq(self,query_str):
+        count = 0
+
+        if len(query_str) == 0:
+            return 1
+
+        current_node = self.root
+
+        for char in query_str:
+            index = ord(char) - ord('a')
+            if current_node.children[index] is not None:
+                count += 1
+                current_node = current_node.children[index]
+        return current_node.count
+
+
+
+
+trie = Trie()
+words = ["banana","cookie","zombie","zomb","zomie","zombe"]
+for word in words:
+    trie.insert(word)
+print(trie.prefix_freq("zomb"))
