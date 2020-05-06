@@ -1,27 +1,31 @@
 class TrieNode:
     def __init__(self,char):
         self.children = [None] * 26
+        self.leaf_count = 0
         self.is_end = False
         self.char = char
         self.count = 0
 
 class Trie:
     def __init__(self):
-        self.root = TrieNode("*")
+        self.root = TrieNode(" ")
 
     def insert(self,word):
         current_node = self.root
         if len(word) == 0:
-            self.root.is_end = True
             return
 
         for char in word:
             index = ord(char) - ord('a')
             if current_node.children[index] is None:
-                current_node.children[index] = TrieNode(char)
+                new_node = TrieNode(char)
+                current_node.children[index] = new_node
+            current_node.leaf_count += 1
             current_node = current_node.children[index]
+
         current_node.is_end = True
         current_node.count += 1
+
 
     def search(self,word):
         if len(word) == 0:
@@ -38,7 +42,6 @@ class Trie:
 
 
     def string_freq(self,query_str):
-        count = 0
 
         if len(query_str) == 0:
             return 1
@@ -48,31 +51,28 @@ class Trie:
         for char in query_str:
             index = ord(char) - ord('a')
             if current_node.children[index] is not None:
-                if current_node.children[index].is_end:
-                    count += 1
-            current_node = current_node.children[index]
+                current_node = current_node.children[index]
         return current_node.count
 
     def prefix_freq(self,query_str):
         count = 0
+        current_node = self.root
 
         if len(query_str) == 0:
             return 1
 
-        current_node = self.root
-
+        #get to the end of the prefix
         for char in query_str:
             index = ord(char) - ord('a')
-            if current_node.children[index] is not None:
-                count += 1
+            if current_node.children[index] is not None or current_node.is_end:
                 current_node = current_node.children[index]
-        return current_node.count
+        temp_node = current_node
+        count += temp_node.leaf_count
 
-
-
+        return count
 
 trie = Trie()
-words = ["banana","cookie","zombie","zomb","zomie","zombe"]
+words = ["zombie","zomb","zom","zombe","zoo"]
 for word in words:
     trie.insert(word)
-print(trie.prefix_freq("zomb"))
+print(trie.prefix_freq("z"))
