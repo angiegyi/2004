@@ -7,8 +7,12 @@ class TrieNode:
         self.count = 0
 
 class Trie:
-    def __init__(self):
+    def __init__(self,string_list):
         self.root = TrieNode(" ")
+        self.string_list = string_list
+
+        for word in string_list:
+            self.insert(word)
 
     def insert(self,word):
         current_node = self.root
@@ -47,7 +51,7 @@ class Trie:
     def string_freq(self,query_str):
 
         if len(query_str) == 0:
-            return 1
+            return 0
 
         current_node = self.root
 
@@ -64,7 +68,7 @@ class Trie:
         current_node = self.root
 
         if len(query_str) == 0:
-            return 1
+            return len(self.string_list)
 
         #get to the end of the prefix
         for char in query_str:
@@ -73,36 +77,25 @@ class Trie:
                 current_node = current_node.children[index]
         temp_node = current_node
         count += len(temp_node.leaf_count)
-
-
-        for char in temp_node.leaf_count:
-            print(char.char)
         return count
 
-    def wildcard_prefix_freq(self,word):
-        out = []
-        current_node = self.root
-
-        if len(word) == 0:
-            return True
-
-        if current_node.is_end == True:
-            out += [current_node.char]
-            return out
-
-        for i in range(len(word)):
-            if word[i] == "?":
-                continue
-
-            index = ord(word[i]) - ord('a')
-            if current_node.children[index] is not None:
-                self.wildcard_prefix_freq(word[i:])
-                current_node = current_node.children[index]
-        return out
 
 
-trie = Trie()
-words = ['aa', 'aab', 'bcd', 'aa', 'baa', 'bcd', 'aab', 'aa', 'bhde']
-for word in words:
-    trie.insert(word)
-print(trie.string_freq("aaba"))
+words =  [ "aa",
+            "aab",
+            "aaab",
+            "abaa",
+            "aa",
+            "abba",
+            "aaba",
+            "aaa",
+            "aa",
+            "aaab",
+            "abbb",
+            "baaa",
+            "baa",
+            "bba",
+            "bbab"
+        ]
+trie = Trie(words)
+print(trie.string_freq("aacb"))
