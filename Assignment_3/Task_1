@@ -1,9 +1,13 @@
 class TrieNode:
     def __init__(self,char):
         self.children = [None] * 27
-        self.leaf_count = [] #list of leaf children
         self.is_end = False
         self.char = char
+
+        #to keep track of the children at each node
+        self.leaf_count = []  # list of leaf children
+
+        #to keep occurances at each node
         self.count = 0
 
 class Trie:
@@ -30,8 +34,8 @@ class Trie:
 
         current_node.is_end = True
         current_node.count += 1
+        #adds the end of the word $
         current_node.leaf_count += [TrieNode(word[len(word)-1])]
-
 
 
     def search(self,word):
@@ -76,26 +80,13 @@ class Trie:
             if current_node.children[index] is not None or current_node.is_end:
                 current_node = current_node.children[index]
         temp_node = current_node
-        count += len(temp_node.leaf_count)
+
+        if temp_node is not None:
+            count += len(temp_node.leaf_count)
         return count
 
 
 
-words =  [ "aa",
-            "aab",
-            "aaab",
-            "abaa",
-            "aa",
-            "abba",
-            "aaba",
-            "aaa",
-            "aa",
-            "aaab",
-            "abbb",
-            "baaa",
-            "baa",
-            "bba",
-            "bbab"
-        ]
+words =  ['aaaaaaaaaaaaaaaaaa', 'faldshfjabjbvlsafjdska', 'sadsagfkbfdkjbfkjdbkas', 'qwertyuiop', 'falpshfjamnbvcxz']
 trie = Trie(words)
-print(trie.string_freq("aacb"))
+print(trie.string_freq("c"))
