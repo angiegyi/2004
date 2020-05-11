@@ -1,7 +1,7 @@
 class TrieNode:
     def __init__(self,char):
-        self.children = [None] * 26
-        self.leaf_count = 0
+        self.children = [None] * 27
+        self.leaf_count = [] #list of leaf children
         self.is_end = False
         self.char = char
         self.count = 0
@@ -12,6 +12,7 @@ class Trie:
 
     def insert(self,word):
         current_node = self.root
+
         if len(word) == 0:
             return
 
@@ -20,11 +21,13 @@ class Trie:
             if current_node.children[index] is None:
                 new_node = TrieNode(char)
                 current_node.children[index] = new_node
-            current_node.leaf_count += 1
+            current_node.leaf_count += [current_node.children[index]]
             current_node = current_node.children[index]
 
         current_node.is_end = True
         current_node.count += 1
+        current_node.leaf_count += [TrieNode(word[len(word)-1])]
+
 
 
     def search(self,word):
@@ -52,6 +55,8 @@ class Trie:
             index = ord(char) - ord('a')
             if current_node.children[index] is not None:
                 current_node = current_node.children[index]
+            else:
+                return 0
         return current_node.count
 
     def prefix_freq(self,query_str):
@@ -67,12 +72,37 @@ class Trie:
             if current_node.children[index] is not None or current_node.is_end:
                 current_node = current_node.children[index]
         temp_node = current_node
-        count += temp_node.leaf_count
+        count += len(temp_node.leaf_count)
 
+
+        for char in temp_node.leaf_count:
+            print(char.char)
         return count
 
+    def wildcard_prefix_freq(self,word):
+        out = []
+        current_node = self.root
+
+        if len(word) == 0:
+            return True
+
+        if current_node.is_end == True:
+            out += [current_node.char]
+            return out
+
+        for i in range(len(word)):
+            if word[i] == "?":
+                continue
+
+            index = ord(word[i]) - ord('a')
+            if current_node.children[index] is not None:
+                self.wildcard_prefix_freq(word[i:])
+                current_node = current_node.children[index]
+        return out
+
+
 trie = Trie()
-words = ["zombie","zomb","zom","zombe","zoo"]
+words = ['aa', 'aab', 'bcd', 'aa', 'baa', 'bcd', 'aab', 'aa', 'bhde']
 for word in words:
     trie.insert(word)
-print(trie.prefix_freq("z"))
+print(trie.string_freq("aaba"))
