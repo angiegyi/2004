@@ -23,10 +23,9 @@ class Trie:
 
         for char in word:
             index = ord(char) - ord('a')
-
             if current_node.children[index] is None:
                 current_node.children[index] = TrieNode(char)
-            current_node.leaf_nodes += [current_node.children[index]]
+            current_node.leaf_nodes += [index]
             current_node = current_node.children[index]
 
         current_node.is_end = True
@@ -69,8 +68,11 @@ class Trie:
         #get to the end of the prefix
         for char in query_str:
             index = ord(char) - ord('a')
+
             if current_node.children[index] is not None or current_node.is_end:
                 current_node = current_node.children[index]
+            else:
+                return 0
 
         if current_node is not None:
             if current_node.count > 0:
@@ -81,6 +83,22 @@ class Trie:
         return 0
 
 
-words =  ['aaaaaaaaaaaaaaaaaa', 'faldshfjabjbvlsafjdska', 'sadsagfkbfdkjbfkjdbkas', 'qwertyuiop', 'falpshfjamnbvcxz']
+words =  [
+            "aa",
+            "aab",
+            "aaab",
+            "abaa",
+            "aa",
+            "abba",
+            "aaba",
+            "aaa",
+            "aa",
+            "aaab",
+            "abbb",
+            "baaa",
+            "baa",
+            "bba",
+            "bbab"
+        ]
 trie = Trie(words)
-print(trie.string_freq("c"))
+print(trie.prefix_freq("c"))

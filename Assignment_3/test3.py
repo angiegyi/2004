@@ -5,10 +5,11 @@ import unittest
 
 import Assignment_3
 
+
 class TrieNode:
     def __init__(self,char):
-        self.children = [None] * 27
-        self.leaf_count = [] #list of leaf children
+        self.children = [None] * 26
+        self.leaf_nodes = [] #list of leaf children
         self.is_end = False
         self.char = char
         self.count = 0
@@ -30,16 +31,12 @@ class Trie:
         for char in word:
             index = ord(char) - ord('a')
             if current_node.children[index] is None:
-                new_node = TrieNode(char)
-                current_node.children[index] = new_node
-            current_node.leaf_count += [current_node.children[index]]
+                current_node.children[index] = TrieNode(char)
+            current_node.leaf_nodes += [index]
             current_node = current_node.children[index]
 
         current_node.is_end = True
         current_node.count += 1
-        current_node.leaf_count += [TrieNode(word[len(word)-1])]
-
-
 
     def search(self,word):
         if len(word) == 0:
@@ -61,7 +58,6 @@ class Trie:
             return 0
 
         current_node = self.root
-
         for char in query_str:
             index = ord(char) - ord('a')
             if current_node.children[index] is not None:
@@ -71,7 +67,6 @@ class Trie:
         return current_node.count
 
     def prefix_freq(self,query_str):
-        count = 0
         current_node = self.root
 
         if len(query_str) == 0:
@@ -80,13 +75,19 @@ class Trie:
         #get to the end of the prefix
         for char in query_str:
             index = ord(char) - ord('a')
+
             if current_node.children[index] is not None or current_node.is_end:
                 current_node = current_node.children[index]
-        temp_node = current_node
+            else:
+                return 0
 
-        if temp_node != None:
-            count += len(temp_node.leaf_count)
-        return count
+        if current_node is not None:
+            if current_node.count > 0:
+                #get number of children + number of how many repeats of that string
+                return len(current_node.leaf_nodes) + current_node.count
+            else:
+                return len(current_node.leaf_nodes)
+        return 0
 
 
 
