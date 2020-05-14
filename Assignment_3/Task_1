@@ -82,6 +82,44 @@ class Trie:
                 return len(current_node.leaf_nodes)
         return 0
 
+    def wildcard_prefix_freq(self, query_str):
+
+        output_list = []
+        current_node = self.root
+
+        for char in query_str:
+            index = ord(char) - ord('a')
+            if char == "?":
+                return self.wildcard_prefix_aux(current_node,query_str,current_node.leaf_nodes)
+            elif current_node.children[index] is None:
+                return []
+            else:
+                current_node = current_node.children[index]
+
+        return self.wildcard_prefix_aux(current_node,query_str,current_node.leaf_nodes)
+
+    def wildcard_prefix_aux(self,current_node,query_str,leaf_nodes):
+
+        str = ""
+
+        if current_node.is_end:
+            return str
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 words =  [
             "aa",
