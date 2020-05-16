@@ -179,4 +179,4 @@ words = [
         ]
 
 trie = Trie(words)
-print(trie.wildcard_prefix_freq("aaab?"))
+print(trie.wildcard_prefix_freq("ac?"))

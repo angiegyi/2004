@@ -95,7 +95,6 @@ class Trie:
         if len(query_str) == 0:
             return []
 
-        output_list = []
         current_node = self.root
 
         # get prefix and suffix
@@ -109,63 +108,40 @@ class Trie:
             if current_node.children[index] is not None or current_node.is_end:
                 current_node = current_node.children[index]
             else:
-                output_list.append(prefix_query + current_node.char + suffix_query)
-        # we have the child array of current node which is array of integers
-
-        child_array = current_node.leaf_nodes
-
-        if suffix_query != "":
-
-            if current_node.char == " ":
                 return []
 
-            # for the index of each child
-            for index in child_array:
+        # we have the child array of current node which is array of integers
+        child_array = current_node.leaf_nodes
 
-                suffix_found = True
-                letter = chr(index + 97)
-                current = current_node.children[index]
+        #node that doesnt exist
+        if current_node.char == " ":
+            if query_str[0] != "?":
+                return []
 
-                if current is None:
-                    return []
+        # for the index of each child
+        for index in child_array:
 
-                for suffix in suffix_query:
-                    index = ord(suffix) - ord('a')
+            suffix_found = True
+            letter = chr(index + 97)
+            current = current_node.children[index]
 
-                    if current.children[index] is None:
-                        suffix_found = False
-                        break
+            if current is None:
+                break
 
-                if suffix_found:
-                    self.wildcard_prefix_aux(current.children[index], prefix_query + letter + suffix_query, query_str,
-                                             output_list)
+            for suffix in suffix_query:
+                index = ord(suffix) - ord('a')
 
-        # suffix does not exist -> ? is at the end
-        else:
-            if query_str == "?":
-                self.wildcard_prefix_aux(current_node, prefix_query, query_str, output_list)
+                if current.children[index] is None:
+                    suffix_found = False
+                    break
+                current = current.children[index]
 
-            else:
-                for index in child_array:
-
-                    suffix_found = True
-                    letter = chr(index + 97)
-                    current = current_node.children[index]
-
-                    if current is None:
-                        return []
-
-                    for suffix in prefix_query:
-                        index = ord(suffix) - ord('a')
-
-                        if current.children[index] is None:
-                            suffix_found = False
-                            break
-
-                    if suffix_found:
-                        self.wildcard_prefix_aux(current.children[index], prefix_query, query_str, output_list)
+            if suffix_found:
+                self.wildcard_prefix_aux(current, prefix_query + letter + suffix_query, query_str)
 
         return self.wildcard
+
+
 
     def wildcard_prefix_aux(self, current_node, current_string, query, strings=[]):
         if current_node.is_end:
