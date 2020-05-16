@@ -15,7 +15,7 @@ class Trie:
         for word in string_list:
             self.insert(word)
 
-    def insert(self,word):
+    def insert(self, word):
         current_node = self.root
 
         if len(word) == 0:
@@ -25,11 +25,29 @@ class Trie:
             index = ord(char) - ord('a')
             if current_node.children[index] is None:
                 current_node.children[index] = TrieNode(char)
-            current_node.leaf_nodes += [index]
+                current_node.leaf_nodes += [index]
+                current_node.leaf_nodes = sorted(current_node.leaf_nodes)
             current_node = current_node.children[index]
 
         current_node.is_end = True
         current_node.count += 1
+
+        #
+        # for char in word:
+        #     index = ord(char) - ord('a')
+        #     if current_node.children[index] is None:
+        #         current_node.children[index] = TrieNode(char)
+        #         current_node.leaf_nodes += [index]
+        #     current_node.count += 1
+        #     current_node = current_node.children[index]
+        # current_node.is_end = True
+
+
+        # if len(current_node.leaf_nodes) == 0:
+        #     current_node.is_end = True
+        # else:
+        #     current_node.is_end = False
+        #     current_node.count += 1
 
     def search(self,word):
         if len(word) == 0:
@@ -84,44 +102,64 @@ class Trie:
 
     def wildcard_prefix_freq(self, query_str):
 
+        if len(query_str) == 0:
+            return []
+
         output_list = []
         current_node = self.root
 
-        for char in query_str:
+        #get prefix and suffix
+        question_mark = query_str.index("?")
+        prefix_query = query_str[0:question_mark]
+        suffix_query = query_str[question_mark+1: len(query_str)]
+
+        #prefix -> iterate until you find ?
+        for char in prefix_query:
             index = ord(char) - ord('a')
-            if char == "?":
-                return self.wildcard_prefix_aux(current_node,query_str,current_node.leaf_nodes)
-            elif current_node.children[index] is None:
+            if current_node.children[index] is not None or current_node.is_end:
+                current_node = current_node.children[index]
+            else:
+                return []
+
+        # now we have current node as character before "?"
+        if len(prefix_query) == len(query_str):
+            output_list.append(prefix_query + current_node.char + suffix_query)
+
+        #we have the child array of current node which is array of integers
+        child_array = current_node.leaf_nodes
+
+        #for the index of each child
+        for index in child_array:
+            letter = chr(index + 97)
+            current = current_node.children[index]
+            if current is None:
                 return []
             else:
-                current_node = current_node.children[index]
-
-        return self.wildcard_prefix_aux(current_node,query_str,current_node.leaf_nodes)
-
-    def wildcard_prefix_aux(self,current_node,query_str,leaf_nodes):
-
-        str = ""
-
-        if current_node.is_end:
-            return str
+                self.wildcard_prefix_aux(current,prefix_query + letter + suffix_query,output_list)
+        return output_list
 
 
 
 
 
 
+    def wildcard_prefix_aux(self, current_node, current_string, strings = []):
 
+        if current_node is not None:
+            if len(current_node.leaf_nodes) == 0:
+                for i in range(current_node.count):
+                    strings.append(current_string)
 
+            else:
+                if current_node.is_end:
+                    for i in range(current_node.count):
+                        strings.append(current_string)
 
+                for index in current_node.leaf_nodes:
+                    strings = self.wildcard_prefix_aux(current_node.children[index],current_string+chr(index+97),strings)
+        return strings
 
-
-
-
-
-
-
-
-words =  [
+words = [
             "aa",
             "aab",
             "aaab",
@@ -138,5 +176,6 @@ words =  [
             "bba",
             "bbab"
         ]
+
 trie = Trie(words)
-print(trie.prefix_freq("c"))
+print(trie.wildcard_prefix_freq("a?a"))

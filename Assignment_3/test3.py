@@ -22,7 +22,7 @@ class Trie:
         for word in string_list:
             self.insert(word)
 
-    def insert(self,word):
+    def insert(self, word):
         current_node = self.root
 
         if len(word) == 0:
@@ -32,7 +32,8 @@ class Trie:
             index = ord(char) - ord('a')
             if current_node.children[index] is None:
                 current_node.children[index] = TrieNode(char)
-            current_node.leaf_nodes += [index]
+                current_node.leaf_nodes += [index]
+                current_node.leaf_nodes = sorted(current_node.leaf_nodes)
             current_node = current_node.children[index]
 
         current_node.is_end = True
@@ -89,6 +90,63 @@ class Trie:
                 return len(current_node.leaf_nodes)
         return 0
 
+    def wildcard_prefix_freq(self, query_str):
+
+        if len(query_str) == 0:
+            return []
+
+        output_list = []
+        current_node = self.root
+
+        # get prefix and suffix
+        question_mark = query_str.index("?")
+        prefix_query = query_str[0:question_mark]
+        suffix_query = query_str[question_mark + 1: len(query_str)]
+
+        # prefix -> iterate until you find ?
+        for char in prefix_query:
+            index = ord(char) - ord('a')
+            if current_node.children[index] is not None or current_node.is_end:
+                current_node = current_node.children[index]
+            else:
+                return []
+
+        # now we have current node as character before "?"
+        if len(prefix_query) == len(query_str):
+            output_list.append(prefix_query + current_node.char + suffix_query)
+
+        # we have the child array of current node which is array of integers
+        child_array = current_node.leaf_nodes
+
+        # for the index of each child
+        for index in child_array:
+            letter = chr(index + 97)
+            current = current_node.children[index]
+            if current is None:
+                return []
+            else:
+                self.wildcard_prefix_aux(current, prefix_query + letter, output_list)
+        return output_list
+
+    def wildcard_prefix_aux(self, current_node, current_string, strings=[]):
+
+        if current_node is not None:
+            if len(current_node.leaf_nodes) == 0:
+                for i in range(current_node.count):
+                    strings.append(current_string)
+
+            else:
+                if current_node.is_end:
+                    for i in range(current_node.count):
+                        strings.append(current_string)
+
+
+                for index in current_node.leaf_nodes:
+                    strings = self.wildcard_prefix_aux(current_node.children[index], current_string + chr(index + 97),
+                                                       strings)
+        return strings
+
+
 
 
 
@@ -116,41 +174,41 @@ class TestTrie(unittest.TestCase):
         ]
         self.trie = Trie(self.text)
 
-    def test_string_freq_example(self):
-        """Test `string_freq` on spec example."""
-        self.assertEqual(self.trie.string_freq("aa"), 3)
-
-    def test_string_freq_absent(self):
-        """Test `string_freq` with non-matching strings."""
-        for absentee in ["c", "abc", "abbac", "aacb"]:
-            with self.subTest(absentee=absentee):
-                self.assertEqual(self.trie.string_freq(absentee), 0)
-
-    def test_prefix_freq_example(self):
-        """Test `prefix_freq` on spec example."""
-        self.assertEqual(self.trie.prefix_freq("aa"), 8)
-
-    def test_prefix_freq_empty(self):
-        """Test `prefix_freq` on empty prefix."""
-        self.assertEqual(self.trie.prefix_freq(""), len(self.text))
-
-    def test_prefix_freq_absent(self):
-        """Test `prefix_freq` with non-matching queries."""
-        for absentee in ["aaaa", "c", "ac", "aabc", "aabac"]:
-            with self.subTest(absentee=absentee):
-                self.assertEqual(self.trie.prefix_freq(absentee), 0)
-
-    # def test_wildcard_prefix_freq_example(self):
-    #     """Test `wildcard_prefix_freq` with spec example."""
-    #     self.assertEqual(
-    #         self.trie.wildcard_prefix_freq("aa?"),
-    #         ["aaa", "aaab", "aaab", "aab", "aaba"]
-    #     )
+    # def test_string_freq_example(self):
+    #     """Test `string_freq` on spec example."""
+    #     self.assertEqual(self.trie.string_freq("aa"), 3)
     #
-    # def test_wildcard_prefix_freq_minimal(self):
-    #     """Test `wildcard_prefix_freq` on a single wildcard."""
-    #     self.assertEqual(self.trie.wildcard_prefix_freq("?"), sorted(self.text))
+    # def test_string_freq_absent(self):
+    #     """Test `string_freq` with non-matching strings."""
+    #     for absentee in ["c", "abc", "abbac", "aacb"]:
+    #         with self.subTest(absentee=absentee):
+    #             self.assertEqual(self.trie.string_freq(absentee), 0)
     #
+    # def test_prefix_freq_example(self):
+    #     """Test `prefix_freq` on spec example."""
+    #     self.assertEqual(self.trie.prefix_freq("aa"), 8)
+    #
+    # def test_prefix_freq_empty(self):
+    #     """Test `prefix_freq` on empty prefix."""
+    #     self.assertEqual(self.trie.prefix_freq(""), len(self.text))
+    #
+    # def test_prefix_freq_absent(self):
+    #     """Test `prefix_freq` with non-matching queries."""
+    #     for absentee in ["aaaa", "c", "ac", "aabc", "aabac"]:
+    #         with self.subTest(absentee=absentee):
+    #             self.assertEqual(self.trie.prefix_freq(absentee), 0)
+
+    def test_wildcard_prefix_freq_example(self):
+        """Test `wildcard_prefix_freq` with spec example."""
+        self.assertEqual(
+            self.trie.wildcard_prefix_freq("aa?"),
+            ["aaa", "aaab", "aaab", "aab", "aaba"]
+        )
+
+    def test_wildcard_prefix_freq_minimal(self):
+        """Test `wildcard_prefix_freq` on a single wildcard."""
+        self.assertEqual(self.trie.wildcard_prefix_freq("?"), sorted(self.text))
+
     # def test_wildcard_prefix_freq_too_long(self):
     #     """Test `wildcard_prefix_freq` with too-long queries."""
     #     self.assertEqual(self.trie.wildcard_prefix_freq("aaab?"), [])
@@ -161,13 +219,13 @@ class TestTrie(unittest.TestCase):
     #     for absentee in ["?c", "c?", "a?c", "bb?a", "ac?", "a?ac"]:
     #         with self.subTest(absentee=absentee):
     #             self.assertEqual(self.trie.wildcard_prefix_freq(absentee), [])
-    #
-    # def test_wildcard_prefix_match(self):
-    #     """Test `wildcard_prefix_freq` with valid queries."""
-    #     self.assertEqual(
-    #         self.trie.wildcard_prefix_freq("a?a"),
-    #         sorted(["aaa", "aaab", "aaab", "abaa"])
-    #     )
+
+    def test_wildcard_prefix_match(self):
+        """Test `wildcard_prefix_freq` with valid queries."""
+        self.assertEqual(
+            self.trie.wildcard_prefix_freq("a?a"),
+            sorted(["aaa", "aaab", "aaab", "abaa"])
+        )
 
 
 if __name__ == "__main__":
