@@ -10,6 +10,7 @@ class Trie:
     def __init__(self,string_list):
         self.root = TrieNode(" ")
         self.string_list = string_list
+        self.wildcard = []
 
         for word in string_list:
             self.insert(word)
@@ -24,29 +25,13 @@ class Trie:
             index = ord(char) - ord('a')
             if current_node.children[index] is None:
                 current_node.children[index] = TrieNode(char)
-                current_node.leaf_nodes += [index]
+                current_node.leaf_nodes.append(index)
                 current_node.leaf_nodes = sorted(current_node.leaf_nodes)
             current_node = current_node.children[index]
 
         current_node.is_end = True
         current_node.count += 1
 
-        #
-        # for char in word:
-        #     index = ord(char) - ord('a')
-        #     if current_node.children[index] is None:
-        #         current_node.children[index] = TrieNode(char)
-        #         current_node.leaf_nodes += [index]
-        #     current_node.count += 1
-        #     current_node = current_node.children[index]
-        # current_node.is_end = True
-
-
-        # if len(current_node.leaf_nodes) == 0:
-        #     current_node.is_end = True
-        # else:
-        #     current_node.is_end = False
-        #     current_node.count += 1
 
     def search(self,word):
         if len(word) == 0:
@@ -100,7 +85,6 @@ class Trie:
         return 0
 
     def wildcard_prefix_freq(self, query_str):
-
         if len(query_str) == 0:
             return []
 
@@ -118,56 +102,63 @@ class Trie:
             if current_node.children[index] is not None or current_node.is_end:
                 current_node = current_node.children[index]
             else:
-                return []
-                # output_list.append(prefix_query + current_node.char + suffix_query)
-
+                output_list.append(prefix_query + current_node.char + suffix_query)
         # we have the child array of current node which is array of integers
+
         child_array = current_node.leaf_nodes
 
+        if suffix_query != "":
 
-        for index in child_array:
-            suffix_found = True
-            letter = chr(index + 97)
-            current = current_node.children[index]
+            if current_node.char == " ":
+                return []
 
-            for char in suffix_query:
-                suff_index = ord(char) - 97
+            # for the index of each child
+            for index in child_array:
 
-                if current.children[suff_index] is None:
-                    suffix_found = False
-                    break
+                suffix_found = True
+                letter = chr(index + 97)
+                current = current_node.children[index]
 
-            if current.is_end:
-                output_list.append(prefix_query + letter + suffix_query)
+                if current is None:
+                    return []
 
-            if suffix_found:
-                self.wildcard_prefix_aux(current, prefix_query + letter + suffix_query, output_list)
+                for suffix in suffix_query:
+                    index = ord(suffix) - ord('a')
 
+                    if current.children[index] is None:
+                        suffix_found = False
+                        break
 
+                if suffix_found:
+                    self.wildcard_prefix_aux(current.children[index], prefix_query + letter + suffix_query, query_str,
+                                             output_list)
 
-       #? is at the end
+        # suffix does not exist -> ? is at the end
         else:
-
-            self.wildcard_prefix_aux(current_node, prefix_query + current_node.char, output_list)
-        return output_list
-
-
-    def wildcard_prefix_aux(self, current_node, current_string, strings=[]):
-
-        if current_node is not None:
-            if len(current_node.leaf_nodes) == 0:
-                for i in range(current_node.count):
-                    strings.append(current_string)
+            if query_str == "?":
+                self.wildcard_prefix_aux(current_node, prefix_query, query_str, output_list)
 
             else:
-                # if current_node.is_end:
-                #     for i in range(current_node.count):
-                #         strings.append(current_string)
+                for index in child_array:
 
-                for index in current_node.leaf_nodes:
-                    strings = self.wildcard_prefix_aux(current_node.children[index], current_string + chr(index + 97),strings)
-        return strings
+                    suffix_found = True
+                    letter = chr(index + 97)
+                    current = current_node.children[index]
 
+                    if current is None:
+                        return []
+
+                    for suffix in prefix_query:
+                        index = ord(suffix) - ord('a')
+
+                        if current.children[index] is None:
+                            suffix_found = False
+                            break
+
+                    if suffix_found:
+                        self.wildcard_prefix_aux(current.children[index], prefix_query, query_str, output_list)
+
+        return self.wildcard
 
 words = [
             "aa",
@@ -176,7 +167,16 @@ words = [
             "abaa",
             "aa",
             "abba",
+            "aaba",
+            "aaa",
+            "aa",
+            "aaab",
+            "abbb",
+            "baaa",
+            "baa",
+            "bba",
+            "bbab"
         ]
 
 trie = Trie(words)
-print(trie.wildcard_prefix_freq("?a"))
+print(trie.wildcard_prefix_freq("aaab?"))
