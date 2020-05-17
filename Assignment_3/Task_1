@@ -160,23 +160,7 @@ class Trie:
 
         return self.wildcard
 
-words = [
-            "aa",
-            "aab",
-            "aaab",
-            "abaa",
-            "aa",
-            "abba",
-            "aaba",
-            "aaa",
-            "aa",
-            "aaab",
-            "abbb",
-            "baaa",
-            "baa",
-            "bba",
-            "bbab"
-        ]
+words = ['aa', 'aad', 'abc', 'aaa', 'bcd', 'defg']
 
 trie = Trie(words)
 print(trie.wildcard_prefix_freq("ac?"))
