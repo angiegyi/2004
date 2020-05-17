@@ -4,8 +4,7 @@ class TrieNode:
         self.leaf_nodes = [] #list of leaf children
         self.is_end = False
         self.char = char
-        self.end_count = 0
-        self.node_count = 0
+        self.count = 0
 
 class Trie:
     def __init__(self,string_list):
@@ -24,17 +23,15 @@ class Trie:
 
         for char in word:
             index = ord(char) - ord('a')
-
             if current_node.children[index] is None:
                 current_node.children[index] = TrieNode(char)
                 current_node.leaf_nodes.append(index)
                 current_node.leaf_nodes = sorted(current_node.leaf_nodes)
-            current_node.node_count += 1
             current_node = current_node.children[index]
 
-        current_node.node_count += 1
         current_node.is_end = True
-        current_node.end_count += 1
+        current_node.count += 1
+
 
     def search(self,word):
         if len(word) == 0:
@@ -62,7 +59,7 @@ class Trie:
                 current_node = current_node.children[index]
             else:
                 return 0
-        return current_node.end_count
+        return current_node.count
 
     def prefix_freq(self,query_str):
         current_node = self.root
@@ -74,12 +71,20 @@ class Trie:
         for char in query_str:
             index = ord(char) - ord('a')
 
-            if current_node.children[index] is not None:
+            if current_node.children[index] is not None or current_node.is_end:
                 current_node = current_node.children[index]
             else:
                 return 0
 
-        return current_node.node_count
+        print(current_node.count)
+
+        if current_node is not None:
+            if current_node.is_end:
+                #get number of children + number of how many repeats of that string
+                return len(current_node.leaf_nodes) + current_node.count + 1
+            else:
+                return len(current_node.leaf_nodes)
+        return 0
 
     def wildcard_prefix_freq(self, query_str):
         if len(query_str) == 0:
@@ -95,7 +100,7 @@ class Trie:
         # prefix -> iterate until you find ?
         for char in prefix_query:
             index = ord(char) - ord('a')
-            if current_node.children[index] is not None:
+            if current_node.children[index] is not None or current_node.is_end:
                 current_node = current_node.children[index]
             else:
                 return []
@@ -115,32 +120,32 @@ class Trie:
             letter = chr(index + 97)
             current = current_node.children[index]
 
-            #check suffix is in the tree
+            if current is None:
+                return []
+
             for suffix in suffix_query:
                 index = ord(suffix) - ord('a')
 
                 if current.children[index] is None:
                     suffix_found = False
                     break
-
                 current = current.children[index]
 
             if suffix_found:
                 self.wildcard_prefix_aux(current, prefix_query + letter + suffix_query, query_str)
-
-
 
         return self.wildcard
 
     def wildcard_prefix_aux(self, current_node, current_string, query):
         if current_node.is_end:
             if len(current_string) >= len(query):
-                for i in range(current_node.end_count):
+                for i in range(current_node.count):
                     self.wildcard.append(current_string)
         for index in current_node.leaf_nodes:
             self.wildcard_prefix_aux(current_node.children[index], current_string + chr(index + 97),query)
 
 
-words = ['aa', 'aad', 'abc', 'aaa', 'bcd', 'defg']
+words = ['aa', 'aab', 'bcd', 'aa', 'baa', 'bcd', 'aab', 'aa', 'bhde']
+
 trie = Trie(words)
-print(trie.wildcard_prefix_freq('?'))
+print(trie.prefix_freq('aa'))
