@@ -1,146 +1,134 @@
-class TrieNode:
-    def __init__(self,char):
-        self.children = [None] * 26
-        self.leaf_nodes = [] #list of leaf children
-        self.is_end = False
-        self.char = char
-        self.end_count = 0
-        self.node_count = 0
+class Node:
+    def __init__(self, character):
+        self.children = [None] * 27
+        self.leafs = []
+        self.count = 0
+        self.char = character
+        self.number_count = 0
+        self.prefix_count = 0
 
 class Trie:
-    def __init__(self,string_list):
-        self.root = TrieNode(" ")
-        self.string_list = string_list
-        self.wildcard = []
 
-        for word in string_list:
-            self.insert(word)
+    def __init__(self, string_list):
+        self.head = Node(" ")
+        self.string_list = string_list
+        self.default = 97       # ord of 'a'
+        self.wildcard = []
+        for i in string_list:
+            self.insert(i)
+
 
     def insert(self, word):
-        current_node = self.root
-
-        if len(word) == 0:
+        current = self.head
+        if word == '':
             return
-
-        for char in word:
-            index = ord(char) - ord('a')
-
-            if current_node.children[index] is None:
-                current_node.children[index] = TrieNode(char)
-                current_node.leaf_nodes.append(index)
-                current_node.leaf_nodes = sorted(current_node.leaf_nodes)
-            current_node.node_count += 1
-            current_node = current_node.children[index]
-
-        current_node.node_count += 1
-        current_node.is_end = True
-        current_node.end_count += 1
-
-    def search(self,word):
-        if len(word) == 0:
-            return True
-
-        current_node = self.root
-        for char in word:
-            index = ord(char) - ord('a')
-            if current_node.children[index] is None:
-                return False
-            else:
-                current_node = current_node.children[index]
-        return current_node.is_end
+        for k in word:
+            index = ord(k) - self.default
+            if current.children[index] is None:
+                current.children[index] = Node(k)
+                current.leafs.append(index)
+            current.number_count += 1
+            current = current.children[index]
+        current.children[26] = Node('$')
+        current.leafs.append(26)
+        current.number_count += 1
+        current.count += 1
 
 
-    def string_freq(self,query_str):
-
+    def string_freq(self, query_str):
         if len(query_str) == 0:
             return 0
-
-        current_node = self.root
-        for char in query_str:
-            index = ord(char) - ord('a')
-            if current_node.children[index] is not None:
-                current_node = current_node.children[index]
-            else:
+        current = self.head
+        for k1 in query_str:
+            index = ord(k1) - self.default
+            if current.children[index] is None:
                 return 0
-        return current_node.end_count
+            else:
+                current = current.children[index]
+        return current.count
 
-    def prefix_freq(self,query_str):
-        current_node = self.root
 
+    def prefix_freq(self, query_str):
+        current = self.head
         if len(query_str) == 0:
-            return len(self.string_list)
-
-        #get to the end of the prefix
-        for char in query_str:
-            index = ord(char) - ord('a')
-
-            if current_node.children[index] is not None:
-                current_node = current_node.children[index]
-            else:
+            return current.number_count
+        for k1 in query_str:        # this puts us at the end of our prefix
+            index = ord(k1) - self.default
+            if current.children[index] is None:
                 return 0
+            else:
+                current = current.children[index]
+        return current.number_count
 
-        return current_node.node_count
 
     def wildcard_prefix_freq(self, query_str):
         if len(query_str) == 0:
             return []
 
-        current_node = self.root
+        self.wildcard = []  # reset my global variable
 
-        # get prefix and suffix
-        question_mark = query_str.index("?")
-        prefix_query = query_str[0:question_mark]
-        suffix_query = query_str[question_mark + 1: len(query_str)]
+        current = self.head
 
-        # prefix -> iterate until you find ?
-        for char in prefix_query:
-            index = ord(char) - ord('a')
-            if current_node.children[index] is not None:
-                current_node = current_node.children[index]
-            else:
+        if len(current.leafs) == 0:
+            return []
+
+        q_index = query_str.index('?')
+        first_half = query_str[:q_index]
+        second_half = query_str[q_index+1:]
+
+        for k1 in first_half:        # this puts us at the end of our prefix (returns None if prefix not found)
+            index = ord(k1) - self.default
+            if current.children[index] is None:
                 return []
+            current = current.children[index]
+        current.leafs = self.counting_sort(current.leafs)       # O(N) operation
+        question = current          # leaf list are all the possible values of ?, can be accessed from question node
 
-        # we have the child array of current node which is array of integers
-        child_array = current_node.leaf_nodes
-
-        #node that doesnt exist
-        if current_node.char == " ":
-            if query_str[0] != "?":
-                return []
-
-        # for the index of each child
-        for index in child_array:
-
-            suffix_found = True
-            letter = chr(index + 97)
-            current = current_node.children[index]
-
-            #check suffix is in the tree
-            for suffix in suffix_query:
-                index = ord(suffix) - ord('a')
-
+        for j1 in question.leafs:
+            bool_count = True
+            current = question.children[j1]
+            temp = first_half + current.char + second_half
+            for j2 in second_half:  # this puts us at the end of our prefix (returns None if prefix not found)
+                index = ord(j2) - self.default
                 if current.children[index] is None:
-                    suffix_found = False
+                    bool_count = False
                     break
-
                 current = current.children[index]
-
-            if suffix_found:
-                self.wildcard_prefix_aux(current, prefix_query + letter + suffix_query, query_str)
-
-
-
+            if bool_count is True:      # if the prefix can be found, break into this if statement
+                self.wildcard_aux(current, temp)
         return self.wildcard
 
-    def wildcard_prefix_aux(self, current_node, current_string, query):
-        if current_node.is_end:
-            if len(current_string) >= len(query):
-                for i in range(current_node.end_count):
-                    self.wildcard.append(current_string)
-        for index in current_node.leaf_nodes:
-            self.wildcard_prefix_aux(current_node.children[index], current_string + chr(index + 97),query)
 
 
-words = ['aa', 'aad', 'abc', 'aaa', 'bcd', 'defg']
-trie = Trie(words)
-print(trie.wildcard_prefix_freq('?'))
+    def wildcard_aux(self, current, temp):
+        if current.children[26] is not None:
+            if current.children[26].char == '$':
+                for j in range(current.count):
+                    self.wildcard.append(temp)
+        current.leafs = self.counting_sort(current.leafs)   # O(N) where n is len(current.leafs) does not worsen
+        for x1 in current.leafs:                            # the complexity
+            self.wildcard_aux(current.children[x1], temp+current.children[x1].char)
+
+
+    def counting_sort(self, list_of_numbers):
+        """
+        This will sort a list list_of_numbers, using base 27.
+        :param list_of_numbers: A list of integers, all digits must be smaller then base
+        :return: returns a list, sorted by a specific digit, can only input 1 digit
+        Time-complexity: O(N), where n is the length of the input list
+        """
+        sorted_list = [0] * len(list_of_numbers)
+        count_list = [0] * 28  # this means we don't have to shift every number to the right in future steps
+        for i in list_of_numbers:
+            index_number = i % 27
+            count_list[index_number] += 1  # adding 1 for every occurrence of number list_of_number[i]
+        for m in range(len(count_list) - 1, 0, -1):
+            count_list[m] = count_list[m - 1]
+        count_list[0] = 0
+        for k in range(0, len(count_list) - 1):
+            count_list[k + 1] = count_list[k + 1] + count_list[k]
+        for n in list_of_numbers:
+            new = n % 27
+            sorted_list[count_list[new]] = n
+            count_list[new] += 1
+        return sorted_list
