@@ -140,16 +140,17 @@ class Trie:
             letter = chr(index + 97)
             current = current_node.children[index]
 
-            if current is None:
+            if current is not None:
+                #check suffix lies in tree
+                for suffix in suffix_query:
+                    index = ord(suffix) - ord('a')
+                    if current.children[index] is not None:
+                        current = current.children[index]
+                    else:
+                        suffix_found = False
+                        break
+            else:
                 return []
-
-            #check suffix lies in tree
-            for suffix in suffix_query:
-                index = ord(suffix) - ord('a')
-                if current.children[index] is None:
-                    suffix_found = False
-                    break
-                current = current.children[index]
 
             #O(S)
             #retrieve rest of word recursively

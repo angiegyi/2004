@@ -6,9 +6,7 @@ class Node:
         self.char = character
         self.number_count = 0
         self.prefix_count = 0
-
 class Trie:
-
     def __init__(self, string_list):
         self.head = Node(" ")
         self.string_list = string_list
@@ -16,8 +14,6 @@ class Trie:
         self.wildcard = []
         for i in string_list:
             self.insert(i)
-
-
     def insert(self, word):
         current = self.head
         if word == '':
@@ -33,8 +29,6 @@ class Trie:
         current.leafs.append(26)
         current.number_count += 1
         current.count += 1
-
-
     def string_freq(self, query_str):
         if len(query_str) == 0:
             return 0
@@ -46,8 +40,6 @@ class Trie:
             else:
                 current = current.children[index]
         return current.count
-
-
     def prefix_freq(self, query_str):
         current = self.head
         if len(query_str) == 0:
@@ -62,16 +54,14 @@ class Trie:
 
 
     def wildcard_prefix_freq(self, query_str):
+        current = self.head
+        if len(current.leafs) == 0:
+            return []
         if len(query_str) == 0:
             return []
 
+
         self.wildcard = []  # reset my global variable
-
-        current = self.head
-
-        if len(current.leafs) == 0:
-            return []
-
         q_index = query_str.index('?')
         first_half = query_str[:q_index]
         second_half = query_str[q_index+1:]
@@ -85,19 +75,20 @@ class Trie:
         question = current          # leaf list are all the possible values of ?, can be accessed from question node
 
         for j1 in question.leafs:
-            bool_count = True
-            current = question.children[j1]
             temp = first_half + current.char + second_half
+            current = question.children[j1]
+            bool_count = True
+
             for j2 in second_half:  # this puts us at the end of our prefix (returns None if prefix not found)
                 index = ord(j2) - self.default
                 if current.children[index] is None:
                     bool_count = False
                     break
                 current = current.children[index]
+
             if bool_count is True:      # if the prefix can be found, break into this if statement
                 self.wildcard_aux(current, temp)
         return self.wildcard
-
 
 
     def wildcard_aux(self, current, temp):
@@ -108,8 +99,6 @@ class Trie:
         current.leafs = self.counting_sort(current.leafs)   # O(N) where n is len(current.leafs) does not worsen
         for x1 in current.leafs:                            # the complexity
             self.wildcard_aux(current.children[x1], temp+current.children[x1].char)
-
-
     def counting_sort(self, list_of_numbers):
         """
         This will sort a list list_of_numbers, using base 27.
