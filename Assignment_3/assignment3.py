@@ -2,10 +2,10 @@ class TrieNode:
     def __init__(self, char):
         self.children = [None] * 26
         self.leaf_nodes = []
-        self.is_end = False
+        self.is_end = False #indicates end of word
         self.char = char
-        self.end_count = 0
-        self.node_count = 0
+        self.end_count = 0 #count for how many times a word has been added
+        self.node_count = 0 #count for how many times a node has been traversed
 
 
 class Trie:
