@@ -179,7 +179,7 @@ class Trie:
     def counting_sort(self, num_list):
         """
         counting sort is a sorting alogrithm which takes in a list of integers and sorts them based on a key (in this case the place position).
-        Complexity: O(N * U) where N is the length of the input list and U is the length of the largest digit to be sorted
+        Complexity: O(N + U) where N is the length of the input list and U is the length of the largest digit to be sorted
         :param num_list: non empty list of integers
         :return: a sorted list of integers according to pos
         """
@@ -203,5 +203,3 @@ class Trie:
             position[index] += 1
 
         return output
-
-
