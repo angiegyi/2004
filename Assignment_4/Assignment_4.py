@@ -7,42 +7,37 @@ class Node:
         self.neighbours = []
 
 class Edge:
-    def __init__(self,predecessor,weight,successor):
-        self.start_node = predecessor
-        self.end_node = successor
+    def __init__(self,start_node,weight,end_node):
+        self.start_node = start_node
+        self.end_node = end_node
         self.weight = weight
 
 class Graph:
+    """
+    Class representing a graph, uses an adjacency list representation
+    """
     def __init__(self,gfile):
-        self.edges = []
         self.nodes = []
-
         data = []
-
         file = open(gfile)
+
         for i in file:
             data.append(i.strip().split())
 
-        node_number = data[0][0]
-        self.number_of_nodes = int(node_number)
+        self.number_of_nodes = int(data[0][0])
         self.table = [[inf for _ in range(self.number_of_nodes)] for _ in range(self.number_of_nodes)]
 
-        for i in range(int(node_number)):
+        #making the node list
+        for i in range(self.number_of_nodes):
             self.nodes.append(Node(i))
 
-        for i in range(1,len(data)):
-            self.edges.append(Edge(int(data[i][0]),int(data[i][2]),int(data[i][1])))
-
+        #adds neighbours to each node
         for i in range(1,len(data)):
             current_node = int(data[i][0])
             destination_node = int(data[i][1])
             self.nodes[current_node].neighbours += [Edge(current_node,int(data[i][2]), destination_node)]
             self.nodes[destination_node].neighbours += [(Edge(destination_node, int(data[i][2]), current_node))]
 
-        #make the table
-        for edge in self.edges:
-            self.table[edge.start_node][edge.end_node] = 1
-            self.table[edge.end_node][edge.start_node] = 1
 
     def shallowest_spanning_tree(self):
         """
@@ -52,6 +47,12 @@ class Graph:
         """
 
         output = []
+
+        #fill the adjacency table
+        for node in self.nodes:
+            for neighbour in node.neighbours:
+                self.table[node.value][neighbour.end_node] = 1
+                self.table[neighbour.end_node][node.value] = 1
 
         #O(V^3)
         for vertex_k in range(len(self.nodes)):
@@ -72,12 +73,26 @@ class Graph:
 
 
     def shortest_errand(self, home, destination, ice_locs, ice_cream_locs):
+        """
+        Solve the problem of finding the shortest path from home to destination picking up ice and ice cream
+        :param home: starting vertex
+        :param destination: end vertex
+        :param ice_locs: vertices where ice can be picked up
+        :param ice_cream_locs: vertices where ice cream can be picked up
+        :return: (length of the shortest path, path represented as a list of vertices)
+        """
         #queue is the distances linked with the node
         #shortest
 
         pass
 
-    def dijstras(self,home):
+    def dijkstra(self, home):
+        """
+        dijkstra's shortest path algorithm
+        :param home: starting vertex
+        :return: distances of shortest path from a source vertex to every other vertex, pred array containing the
+        predecessors of each vertex
+        """
 
         queue = []
         heapq.heapify(queue)
@@ -86,9 +101,11 @@ class Graph:
         dist = [inf for _ in range(self.number_of_nodes)]
         dist[home] = 0
 
+        #make the queue
         for node in self.nodes:
             heapq.heappush(queue,(dist[node.value],node.value))
 
+        #dijkstra main loop
         while len(queue) != 0:
             index = (heapq.heappop(queue))[1]
             current_vertex = self.nodes[index]
@@ -102,7 +119,7 @@ class Graph:
         return dist
 
 g = Graph("test.txt")
-print(g.dijstras(2))
+print(g.dijkstra(2))
 
 
 
