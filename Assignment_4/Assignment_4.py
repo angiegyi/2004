@@ -73,6 +73,7 @@ class Graph:
 
     def shortest_errand(self, home, destination, ice_locs, ice_cream_locs):
         #queue is the distances linked with the node
+        #shortest
 
         pass
 
