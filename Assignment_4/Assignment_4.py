@@ -33,11 +33,11 @@ class Graph:
         for i in range(1,len(data)):
             self.edges.append(Edge(int(data[i][0]),int(data[i][2]),int(data[i][1])))
 
-        # for i in range(1,len(data)):
-        #     current_node = int(data[i][0])
-        #     destination_node = int(data[i][1])
-        #     self.nodes[current_node].neighbours += [Edge(current_node,data[i][2],data[i][1])]
-        #     self.nodes[destination_node].neighbours += [(Edge(destination_node,data[i][2], data[i][1]))]
+        for i in range(1,len(data)):
+            current_node = int(data[i][0])
+            destination_node = int(data[i][1])
+            self.nodes[current_node].neighbours += [Edge(current_node,int(data[i][2]), destination_node)]
+            self.nodes[destination_node].neighbours += [(Edge(destination_node, int(data[i][2]), current_node))]
 
         #make the table
         for edge in self.edges:
@@ -70,8 +70,38 @@ class Graph:
         value = min(output)
         return (output.index(value),value)
 
+
+    def shortest_errand(self, home, destination, ice_locs, ice_cream_locs):
+        #queue is the distances linked with the node
+
+        pass
+
+    def dijstras(self,home):
+
+        queue = []
+        heapq.heapify(queue)
+
+        pred = [None for _ in range(self.number_of_nodes)]
+        dist = [inf for _ in range(self.number_of_nodes)]
+        dist[home] = 0
+
+        for node in self.nodes:
+            heapq.heappush(queue,(dist[node.value],node.value))
+
+        while len(queue) != 0:
+            index = (heapq.heappop(queue))[1]
+            current_vertex = self.nodes[index]
+            for neighbour in current_vertex.neighbours:
+                neighbour_node = neighbour.end_node #neighbour
+                neighbour_cost = neighbour.weight #distance
+                if (neighbour_cost + dist[current_vertex.value]) < dist[neighbour_node]:
+                    dist[neighbour_node] = neighbour_cost + dist[current_vertex.value]
+                    pred[neighbour_node] = current_vertex.value
+                    heapq.heappush(queue,(dist[neighbour_node],neighbour_node))
+        return dist
+
 g = Graph("test.txt")
-print(g.shallowest_spanning_tree())
+print(g.dijstras(2))
 
 
 
