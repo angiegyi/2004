@@ -46,6 +46,9 @@ class Graph:
         :return: Tuple of the source vertex (int) and the shortest distance to the furthest node from the source (int)
         """
 
+        if len(self.nodes) == 1:
+            return 0, 0
+
         output = []
 
         #fill the adjacency table
@@ -58,7 +61,8 @@ class Graph:
         for vertex_k in range(len(self.nodes)):
             for vertex_i in range(len(self.nodes)):
                 for vertex_j in range(len(self.nodes)):
-                    self.table[vertex_i][vertex_j] = min(self.table[vertex_i][vertex_j],self.table[vertex_i][vertex_k] + self.table[vertex_k][vertex_j])
+                    if vertex_i != vertex_j: #account for same node
+                        self.table[vertex_i][vertex_j] = min(self.table[vertex_i][vertex_j], self.table[vertex_i][vertex_k] + self.table[vertex_k][vertex_j])
 
         #O(V^2)
         for row in self.table:
@@ -118,8 +122,8 @@ class Graph:
                     heapq.heappush(queue,(dist[neighbour_node],neighbour_node))
         return dist
 
-g = Graph("test.txt")
-print(g.dijkstra(2))
+g = Graph('fancy_graph')
+print(g.shallowest_spanning_tree())
 
 
 
