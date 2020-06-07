@@ -1,10 +1,22 @@
 from math import inf
 import heapq
+import copy
 
 class Node:
-    def __init__(self,value):
+    def __init__(self,value, ice_cream_type = False, ice = False, ice_state = False, ice_cream_state = False):
         self.value = value
         self.neighbours = []
+        # self.states = states
+        # self.state_nodes = []
+        #
+        #what kind of a node is it
+        self.ice_cream = ice_cream_type
+        self.ice = ice
+
+        #what states the node are in
+        self.ice_cream_state = ice_cream_state
+        self.ice_state = ice_state
+
 
 class Edge:
     def __init__(self,start_node,weight,end_node):
@@ -85,10 +97,93 @@ class Graph:
         :param ice_cream_locs: vertices where ice cream can be picked up
         :return: (length of the shortest path, path represented as a list of vertices)
         """
-        #queue is the distances linked with the node
-        #shortest
 
-        pass
+        #mark the old nodes for which one are ice and ice cream
+        for node in ice_locs:
+            self.nodes[node].ice = True
+
+        for node in ice_cream_locs:
+            self.nodes[node].ice_cream = True
+
+        #copy the graph and reset node list
+        copy_of_graph = [[] for _ in range(self.number_of_nodes)]
+
+        #add the new verticies
+
+        for node in self.nodes: #iterate through original node list and check type of node
+
+            # indicates this is a plain node
+            if node.ice is False and node.ice_cream is False:
+                copy_of_graph[node.value].append(Node(node.value, False, False, True, True))  # Normal Node State - TT
+                copy_of_graph[node.value].append(Node(node.value, False, False, False, False))  # Normal Node State - FF
+                copy_of_graph[node.value].append(Node(node.value, False, False, True, False))  # Normal Node State - TF
+
+            # node is ice and ice cream
+            elif node.ice is True and node.ice_cream is True:
+                copy_of_graph[node.value].append(Node(node.value, False, True, True, True))   # Ice Node State - TT
+                copy_of_graph[node.value].append(Node(node.value, False, True, True, False))  # Ice Node State - TF
+                copy_of_graph[node.value].append(Node(node.value, True, False, False, False)) # Ice Cream Node State - FF
+
+            # node is just ice
+            elif node.ice is True:
+                copy_of_graph[node.value].append(Node((node.value), False, True, True, True))  # Ice Node State - TT
+                copy_of_graph[node.value].append(Node((node.value), False, True, True, False))  # Ice Node State - TF
+
+            # node is just ice cream
+            else:
+                copy_of_graph[node.value].append(Node((node.value), True, False, True, True))  # Ice Cream  Node State - TT
+                copy_of_graph[node.value].append(Node((node.value), True, False, False, False)) # Ice Cream Node State - FF
+
+        #adding the edges
+
+        for row in copy_of_graph:
+            for node in row: #go through each node
+                matching_neighbour_list = self.nodes[int(node.value)].neighbours #get original neighbour list
+
+                for neighbour in matching_neighbour_list: #goes through each neighbour
+                    current_node = self.nodes[neighbour.start_node]
+                    destination_node = self.nodes[neighbour.end_node]
+                    weight_of_edge = neighbour.weight
+                    current_state = (node.ice_state,node.ice_cream_state) #of state node
+
+                    # going from plain node to ice cream node
+                    if (current_node.ice == False and current_node.ice_cream == False) and destination_node.ice_cream == True:
+
+                        for corresponding_node in copy_of_graph[destination_node.value]:
+                            if current_state == (corresponding_node.ice_state,corresponding_node.ice_cream_state): #you can switch between the same states
+                                node.neighbours.append(Edge(current_node, weight_of_edge, destination_node))
+                                node.neighbours.append(Edge(destination_node, weight_of_edge, current_node))
+
+                    #plain node to ice
+                    if (current_node.ice == False and current_node.ice_cream == False) and destination_node.ice == True:
+                        pass
+
+                    #going from ice to ice cream
+                    elif current_node.ice == True and destination_node.ice_cream == True:
+                        pass
+
+                    #ice cream node to ice node
+                    elif destination_node.ice == True and current_node.ice_cream == True:
+                        pass
+
+                    #if any node to plain node
+                    elif destination_node.ice == False and destination_node.ice_cream == False:
+                        pass
+
+                    # for corresponding_node in copy_of_graph.nodes[destination_node.value]:
+                    #     if current_state == (corresponding_node.ice_state,corresponding_node.ice_cream_state): #you can switch between the same states
+                    #         node.neighbours.append(Edge(current_node, weight_of_edge, destination_node))
+                    #         node.neighbours.append(Edge(destination_node, weight_of_edge, current_node))
+                    #
+
+
+
+
+
+
+
+
+        # return copy_of_graph.dijkstra(home)
 
     def dijkstra(self, home):
         """
@@ -122,14 +217,8 @@ class Graph:
                     heapq.heappush(queue,(dist[neighbour_node],neighbour_node))
         return dist
 
-g = Graph('fancy_graph')
-print(g.shallowest_spanning_tree())
-
-
-
-
-
-
+g = Graph('given_graph2')
+print(g.shortest_errand(0,8,[1,5,8],[4,6]))
 
 
 
