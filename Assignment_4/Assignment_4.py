@@ -28,6 +28,11 @@ class Graph:
     Class representing a graph, uses an adjacency list representation
     """
     def __init__(self,gfile):
+        """
+        Initalises the graph
+        :param gfile: text file with graph data
+        Complexity: O(V + E) where E is the number of edges in the graph and V is the number of vertices in the graph
+        """
         self.nodes = []
         data = []
         file = open(gfile)
@@ -52,7 +57,7 @@ class Graph:
     def shallowest_spanning_tree(self):
         """
         Uses Floyd Warshall Algorithm to find the shallowest spanning tree
-        Complexity: O(V^3) where V is the number of verticies in the graph
+        Complexity: O(V^3) where V is the number of vertices in the graph
         :return: Tuple of the source vertex (int) and the shortest distance to the furthest node from the source (int)
         """
 
@@ -83,6 +88,7 @@ class Graph:
             output.append((max(temp)))
 
         value = min(output)
+
         return output.index(value),value
 
     def shortest_errand(self, home, destination, ice_locs, ice_cream_locs):
@@ -150,7 +156,7 @@ class Graph:
         :param ice_locs: list of integers indicating where the ice nodes are
         :param ice_cream_locs: list of integers indicating where the ice cream nodes are
         :return: a new graph of nodes and edges
-        Complexity O(VE): where V is the number of vertices in the original graph and E is the number of edges in the
+        Complexity O(V + E): where V is the number of vertices in the original graph and E is the number of edges in the
         original graph.
         """
 
