@@ -15,7 +15,7 @@ class Node:
 
 class Edge:
     """
-    Class repesenting an Edge which connects two verticies
+    Class representing an Edge which connects two vertices
     """
     def __init__(self,start_node,weight,end_node):
         self.start_node = start_node
@@ -93,6 +93,7 @@ class Graph:
         :param ice_locs: vertices where ice can be picked up
         :param ice_cream_locs: vertices where ice cream can be picked up
         :return: (length of the shortest path, path represented as a list of vertices)
+        Complexity: O(E log V) where E is the number of edges in the graph and V is the number of vertices in the graph
         """
 
         #first make a new graph
@@ -115,6 +116,7 @@ class Graph:
         :param pred: pred array containing integers representing the predecessor of a node at a given index
         :param destination: the destination node
         :return: a tuple of the length of getting from home to destination, and the path taken
+        Complexity: O(P): where p is the length of the pred array
         """
         # rebuild path
         final_path = []
@@ -203,6 +205,7 @@ class Graph:
         :param home: starting vertex
         :return: distances of shortest path from a source vertex to every other vertex, pred array containing the
         predecessors of each vertex
+        Complexity: O(E Log V) where E is the number of edges in the graph and V is the number of vertices in the graph
         """
         queue = []
         heapq.heapify(queue)
